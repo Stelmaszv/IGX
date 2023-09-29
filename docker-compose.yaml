@@ -9,7 +9,7 @@ services:
     # php
     app:
         build:
-            dockerfile: ./php/Dockerfile
+            dockerfile: Dockerfile
         volumes:
             - /var/www/html/vendor
             - ./app:/var/www/html
@@ -26,7 +26,5 @@ services:
             MYSQL_USER: user
             MYSQL_PASSWORD: secret
             MYSQL_DATABASE: docker-php
-    # redis
-
 volumes:
     mysqldata:
