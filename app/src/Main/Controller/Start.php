@@ -2,10 +2,14 @@
 
 namespace App\Main\Controller;
 
-class Start
+use App\Core\Controller\AbstractController;
+
+class Start extends AbstractController
 {
-    function main(){
-        echo 'vat';
-        return 'gwrg';
+    function main() : void
+    {
+        echo '<pre>';
+        var_dump($this->getRoute()->getParams()['id']);
+        echo '<pre>';
     }
 }
