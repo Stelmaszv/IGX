@@ -26,7 +26,4 @@ RouteMatch::addRoute(
     ]
 );
 
-RouteMatch::setActiveRoute('vqa',[
-    'category' => 'cat',
-    'id' => 1
-]);
+RouteMatch::setHomeRouteIfNotActiveRoute();

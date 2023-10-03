@@ -30,8 +30,22 @@ class RouteMatch
         }
     }
 
-    static private function setParamsForActiveRoute(array $route, array $params){
+    static public function getRouteAsObject(string $name,array $params = []):array
+    {
+        foreach (self::$routes as $routeEl){
+            if( null !== $name && $name === $routeEl['name'] ){
+                return [
+                    'url' => (count($params))? self::setParamsForActiveRoute($routeEl,$params) : $routeEl['url'],
+                    'Controller' => $routeEl['Controller'],
+                    'name' => $routeEl['name']
+                ];
+            }
+        }
 
+        return [];
+    }
+
+    static private function setParamsForActiveRoute(array $route, array $params){
 
         $urls = explode('/',$route['url']);
         foreach ($urls as $key => $url) {
@@ -44,7 +58,11 @@ class RouteMatch
 
         }
 
-        self::$serverUrl = implode("/", $urls);
+        return self::$serverUrl = implode("/", $urls);
+    }
+
+    static public function setHomeRouteIfNotActiveRoute(){
+        self::setActiveRoute('home');
     }
 
     static public function setActiveRoute(?string $name = null,$params = []){
