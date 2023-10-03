@@ -71,12 +71,12 @@ class RouteMatch
                 if (count($params)){
                     self::setParamsForActiveRoute($routeEl,$params);
                 }
-                self::resolve(
-                    $routeEl['url'],
-                    $routeEl['Controller'],
-                    $routeEl['name']
-                );
             }
+            self::resolve(
+                $routeEl['url'],
+                $routeEl['Controller'],
+                $routeEl['name']
+            );
         }
 
         self::checkIfRouteExist();
@@ -108,7 +108,7 @@ class RouteMatch
             }
         }
 
-        return (count($urlMatchArray) === count($serverUrls)) || count($urlMatchArray) === 0;
+        return (count($urlMatchArray) === count($serverUrls)-1) || count($urlMatchArray) === 0;
     }
 
     static private function validateUrl(array $matches):void
