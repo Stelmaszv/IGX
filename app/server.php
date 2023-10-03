@@ -4,6 +4,14 @@ use App\Main\Controller\Start;
 
 RouteMatch::addRoute(
     [
+        'url' => '/',
+        'Controller' => new Start,
+        'name' => 'home'
+    ]
+);
+
+RouteMatch::addRoute(
+    [
         'url' => '/catse/{string:category}/{int:id}',
         'Controller' => new Start,
         'name' => 'vaw'
@@ -18,4 +26,4 @@ RouteMatch::addRoute(
     ]
 );
 
-RouteMatch::getActiveRoute();
+RouteMatch::setHomeRouteIfNotActiveRoute();
