@@ -6,8 +6,8 @@ class VuexTemplete
 {
     var $code;
     var $keywords;
-    var $start = '[#';
-    var $end = '#]';
+    var $start = '{{';
+    var $end = '}}';
 
     public function __construct($url){
         $this->code=file_get_contents($url);
@@ -17,11 +17,11 @@ class VuexTemplete
         $this->code = str_replace("\t",'',$this->code);
         $this->keywords=array();
     }
-    function CAdd($keyword,$text){
+    private function CAdd($keyword,$text){
         $this->keywords[$keyword]=$text;
     }
 
-    function CLoop($array_id,$array_name){
+    private function CLoop(string $array_id,$array_name){
         $count_table = count($array_name);
 
         if ($count_table > 0) {
@@ -48,7 +48,7 @@ class VuexTemplete
         }
     }
 
-    function CIf($keyword, $text){
+    private function CIf($keyword, $text){
         if ($text==1) {
             $this->code = str_replace('<if name="'.$keyword.'">','', $this->code);
             $this->code = str_replace('</if name="'.$keyword.'">','', $this->code);
@@ -59,18 +59,30 @@ class VuexTemplete
     }
 
 
-    function CGet() {
+    public function CGet() {
         reset($this->keywords);
         foreach ($this->keywords as $key => $val) {
             $this->code = str_replace($key, $val, $this->code);
         }
 
-        $this->code = preg_replace('/\[#(.*?)#\]/i', '', $this->code); //czyszczenie nie przypisanych
+        $this->code = preg_replace('/\{{(.*?)}\}/i', '', $this->code); //czyszczenie nie przypisanych
         $this->code = preg_replace('/<if name="(.*?)">/i', '', $this->code); //czyszczenie nie przypisanych
         $this->code = preg_replace('/<\/if name="(.*?)">/i', '', $this->code); //czyszczenie nie przypisanych
         $this->code = preg_replace('/<loop name="(.*?)">/i', '', $this->code); //czyszczenie nie przypisanych
         $this->code = preg_replace('/<\/loop name="(.*?)">/i', '', $this->code); //czyszczenie nie przypisanych
 
         return $this->code;
+    }
+
+    public function getVarables(array $attributes){
+        foreach ($attributes as $key => $attribute){
+            if(is_string($attribute)){
+                $this->CAdd($this->start.''.$key.''.$this->end,$attribute);
+            }elseif (is_array($attribute)){
+                $this->CLoop($key,$attribute);
+            }elseif (is_bool($attribute)){
+                $this->CIf('zero',$attribute);
+            }
+        }
     }
 }

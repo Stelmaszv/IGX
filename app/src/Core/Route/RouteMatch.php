@@ -43,11 +43,11 @@ class RouteMatch
     static public function getRouteAsObject(string $name,array $params = []) : ?Route
     {
         foreach (self::$routes as $routeEl){
-            if( null !== $name && $name === $routeEl['name'] ){
+            if( null !== $name && $name === $routeEl->getName() ){
                 return new Route(
-                    (count($params))? self::setParamsForActiveRoute($routeEl,$params) : $routeEl['url'],
-                    $routeEl['Controller'],
-                    $routeEl['name'],
+                    (count($params))? self::setParamsForActiveRoute($routeEl,$params) : $routeEl->getUrl(),
+                    $routeEl->getController(),
+                    $routeEl->getName(),
                     $params
                 );
             }
@@ -56,9 +56,9 @@ class RouteMatch
         return null;
     }
 
-    static private function setParamsForActiveRoute(array $route, array $params) : string
+    static private function setParamsForActiveRoute(Route $route, array $params) : string
     {
-        $urls = explode('/',$route['url']);
+        $urls = explode('/',$route->getUrl());
         foreach ($urls as $key => $url) {
             $pattern = '/\{([a-zA-Z]+):([a-zA-Z]+)\}/';
             preg_match($pattern, $url, $matches);
