@@ -1,10 +1,6 @@
 <?php
 
-use App\Core\Controller\VuexTemplete;
 use App\Core\Route\RouteMatch;
-use App\Infrastructure\DB\Connect;
-use App\Infrastructure\DB\Engines\MysqliEngin;
-use App\Infrastructure\DB\Engines\PDOEngin;
 use App\Main\Controller\Start;
 
 
