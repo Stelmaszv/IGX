@@ -10,9 +10,8 @@ class Connect
 {
     private ?DBInterface $engin;
     private array $engins = ['PDO','MYSQLI'];
-    private static $instances = [];
 
-    public function __construct()
+    private function __construct()
     {
         $this->engin=$this->setEngin(DBSettings::ENGINE);
     }
@@ -40,11 +39,7 @@ class Connect
 
     public static function getInstance()
     {
-        $subclass = static::class;
-        if (!isset(self::$instances[$subclass])) {
-            self::$instances[$subclass] = new static();
-        }
-        return self::$instances[$subclass];
+        return new static();
     }
 
 

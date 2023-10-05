@@ -1,5 +1,6 @@
 <?php
 use App\Core\Route\RouteMatch;
+use App\Infrastructure\DB\Connect;
 use App\Main\Controller\Start;
 
 RouteMatch::addRoute(
