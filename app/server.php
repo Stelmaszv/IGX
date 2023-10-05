@@ -1,7 +1,6 @@
 <?php
-
-use App\Core\Controller\VuexTemplete;
 use App\Core\Route\RouteMatch;
+use App\Infrastructure\DB\Connect;
 use App\Main\Controller\Start;
 
 RouteMatch::addRoute(
@@ -27,6 +26,5 @@ RouteMatch::addRoute(
         'name' => 'home'
     ]
 );
-
 
 RouteMatch::setActiveRoute();

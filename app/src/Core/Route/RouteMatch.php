@@ -114,7 +114,6 @@ class RouteMatch
         }
     }
 
-
     static private function isMatched(array $urls,array $serverUrls, string $name) : bool
     {
         $urlMatchArray = [];
