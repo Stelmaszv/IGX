@@ -42,6 +42,4 @@ class Connect
         return new static();
     }
 
-
-
 }
