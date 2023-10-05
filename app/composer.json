@@ -16,5 +16,9 @@
     },
     "scripts": {
         "run-phpunit": "vendor/bin/phpunit"
-    }
+    },
+  "require": {
+    "ext-mysqli": "*",
+    "ext-pdo": "*"
+  }
 }
