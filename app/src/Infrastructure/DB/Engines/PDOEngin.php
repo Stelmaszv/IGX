@@ -3,7 +3,7 @@
 namespace App\Infrastructure\DB\Engines;
 
 use App\Infrastructure\DB\DBInterface;
-use App\Infrastructure\DB\DDException;
+use App\Infrastructure\DB\DBException;
 use App\Settings\DBSettings;
 use PDO;
 
@@ -17,7 +17,7 @@ class PDOEngin  implements DBInterface
             $this->pdo->setAttribute(\PDO::ATTR_EMULATE_PREPARES, false);
             $this->pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
         }catch (\PDOException $exception){
-            throw new DDException($exception->getMessage());
+            throw new DBException($exception->getMessage());
         }
     }
 
@@ -32,7 +32,7 @@ class PDOEngin  implements DBInterface
             }
             return $records;
         }catch (\PDOException $exception){
-            throw new DDException($exception->getMessage());
+            throw new DBException($exception->getMessage());
         }
     }
 
@@ -45,7 +45,7 @@ class PDOEngin  implements DBInterface
                 return $message;
             }
         }catch (\PDOException $exception){
-            throw new DDException($exception->getMessage());
+            throw new DBException($exception->getMessage());
         }
     }
 }
