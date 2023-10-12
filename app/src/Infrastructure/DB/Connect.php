@@ -19,7 +19,7 @@ class Connect
     private function setEngin(string $engin) :?DBInterface
     {
         if (!in_array($engin,$this->engins)){
-            throw new DDException('Invalid Engin !');
+            throw new DBException('Invalid Engin !');
         }
 
         switch($engin) {

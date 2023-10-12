@@ -3,7 +3,7 @@
 namespace App\Infrastructure\DB\Engines;
 
 use App\Infrastructure\DB\DBInterface;
-use App\Infrastructure\DB\DDException;
+use App\Infrastructure\DB\DBException;
 use App\Settings\DBSettings;
 use Exception;
 
@@ -18,7 +18,7 @@ class MysqliEngin implements DBInterface
             $this->com = new \MySQLi(DBSettings::HOST,DBSettings::USERNAME,DBSettings::PASSWORD,DBSettings::DBNAME);
             $this->sql = $sql;
         }catch (\mysqli_sql_exception $exception){
-            throw new DDException($exception->getMessage());
+            throw new DBException($exception->getMessage());
         }
     }
 
@@ -32,7 +32,7 @@ class MysqliEngin implements DBInterface
             }
             return $records;
         }catch (\mysqli_sql_exception $exception){
-            throw new DDException($exception->getMessage());
+            throw new DBException($exception->getMessage());
         }
     }
 
@@ -46,7 +46,7 @@ class MysqliEngin implements DBInterface
                 return 'error in query : ' . $sql;
             }
         }catch (\mysqli_sql_exception $exception){
-            throw new DDException($exception->getMessage());
+            throw new DBException($exception->getMessage());
         }
     }
 

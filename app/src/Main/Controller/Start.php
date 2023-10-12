@@ -3,7 +3,6 @@
 namespace App\Main\Controller;
 
 use App\Core\Controller\AbstractController;
-use App\Core\Route\RouteMatch;
 
 class Start extends AbstractController
 {
@@ -11,15 +10,12 @@ class Start extends AbstractController
     {
         $this->setTemplete('../templete/home.html',
             [
-            'url'     =>   RouteMatch::getRouteAsObject('vaw',
-                ["category"=>"feqfqef","id"=>1],
-            )->getUrl(),
-            'name'     =>   $this->getRoute()->getName(),
-            'loop'    => [
+            'name' => $this->getRoute()->getName(),
+            'loop' => [
                 ["number" => 1],
                 ["number" => 2]
             ],
-            'zero'    => true
+            'zero' => true
             ]
         );
         echo $this->getTemplete();

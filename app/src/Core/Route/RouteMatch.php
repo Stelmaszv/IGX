@@ -6,14 +6,16 @@ use App\Core\Controller\AbstractController;
 
 class RouteMatch
 {
-    static $routes = [];
-    static $activeController = null;
-    static $serverUrl = null;
+    static private $routes = [];
+    static private $activeController = null;
+    static private $serverUrl = null;
 
-    static function resolve(string $urlMain,AbstractController $controller,string $name) : void
+    static private function resolve(string $urlMain,AbstractController $controller,string $name, ?string $value = null) : void
     {
         $urls = explode('/',$urlMain);
-        self::$serverUrl = explode('/',$_SERVER['REQUEST_URI']);
+
+        self::$serverUrl = ($value !== null) ? explode('/',$value) : explode('/',$_SERVER['REQUEST_URI']);
+
         if(self::$serverUrl === null) {
             self::validateActiveRoute($urls, self::$serverUrl);
         }
@@ -21,7 +23,7 @@ class RouteMatch
         foreach ($urls as $url){
             $pattern = '/\{([a-zA-Z]+):([a-zA-Z]+)\}/';
             preg_match($pattern, $url, $matches);
-            if(count($matches)===3) {
+            if(count($matches) === 3) {
                 self::validateUrl($matches);
             }
         }
@@ -80,7 +82,7 @@ class RouteMatch
             $pattern = '/\{([a-zA-Z]+):([a-zA-Z]+)\}/';
             preg_match($pattern, $url, $matches);
 
-            if(count($matches)===3) {
+            if(count($matches) === 3) {
                 $params[$matches[2]] = self::$serverUrl[$key];
             }
         }
@@ -93,7 +95,8 @@ class RouteMatch
         self::setActiveRoute('home');
     }
 
-    static public function setActiveRoute(?string $name = null,array $params = []){
+    static public function setActiveRoute(?string $name = null,array $params = []) : void
+    {
         foreach (self::$routes as $routeEl){
             if( null !== $name && $name === $routeEl->getName()){
                 if (count($params)){
@@ -102,13 +105,13 @@ class RouteMatch
                 self::resolve(
                     $routeEl->getUrl(),
                     $routeEl->getController(),
-                    $routeEl->getName()
+                    $routeEl->getName(),
                 );
             }
             self::resolve(
                 $routeEl->getUrl(),
                 $routeEl->getController(),
-                $routeEl->getName()
+                $routeEl->getName(),
             );
 
         }
@@ -120,6 +123,7 @@ class RouteMatch
 
         if(count($serverUrls) === count($urls)){
             foreach ($serverUrls as $serverKey => $serverUrl) {
+
                 if(!empty($serverUrls[$serverKey]) && $serverUrls[$serverKey] === $urls[$serverKey] && !empty($urls[$serverKey])){
                     $urlMatchArray[] = $serverKey;
                 }
