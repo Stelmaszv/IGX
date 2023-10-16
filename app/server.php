@@ -1,8 +1,11 @@
 <?php
 use App\Core\Route\RouteMatch;
-use App\Infrastructure\DB\Connect;
-use App\Main\Controller\Start;
 
+$routeMatch = new RouteMatch();
+require('route.php');
+$routeMatch->setRoute();
+
+/*
 RouteMatch::addRoute(
     [
         'url' => '/catse/{string:category}/{int:id}',
@@ -26,5 +29,7 @@ RouteMatch::addRoute(
         'name' => 'home'
     ]
 );
-
 RouteMatch::setActiveRoute();
+*/
+
+//RouteMatch::setActiveRoute();
