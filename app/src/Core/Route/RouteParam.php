@@ -12,7 +12,7 @@ class RouteParam
             preg_match($pattern, $url, $matches);
 
             if(count($matches)===3) {
-                $urls[$key]=$params[$matches[2]];
+                $urls[$key] = $params[$matches[2]];
             }
 
         }

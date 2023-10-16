@@ -3,6 +3,7 @@
 use App\Core\Route\Route;
 use App\Core\Route\RouteException;
 use App\Core\Route\RouteMatch;
+use App\Core\Route\RouteValidator;
 use App\Main\Controller\Start;
 use PHPUnit\Framework\TestCase;
 
@@ -82,6 +83,22 @@ class RouteMatchTest extends TestCase
 
         $this->assertEquals($routeMatch->getRouteAsObject('home') instanceof Route, true);
 
+    }
+
+    /** @test */
+    public function validateUrlFailure()
+    {
+        $failure = false;
+        try {
+            $routeValidator = new RouteValidator();
+            $pattern = '/\{([a-zA-Z]+):([a-zA-Z]+)\}/';
+            preg_match($pattern, '/cats/{str:category}/{int:id}', $matches);
+            $routeValidator->validateUrl($matches);
+        }catch (RouteException){
+            $failure = true;
+        }
+
+        $this->assertEquals($failure, true);
     }
 
 
