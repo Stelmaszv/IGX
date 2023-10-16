@@ -11,7 +11,6 @@ class Start extends AbstractController
 {
     function main() : void
     {
-        /*
         $this->setTemplete('../templete/home.html',
             [
             'name' => $this->getRoute()->getName(),
@@ -23,13 +22,5 @@ class Start extends AbstractController
             ]
         );
         echo $this->getTemplete();
-        */
-        var_dump($this->getRoute()->getName());
-
-
-
-
-
-
     }
 }
