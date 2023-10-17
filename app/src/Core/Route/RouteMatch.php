@@ -6,118 +6,63 @@ use App\Core\Controller\AbstractController;
 
 class RouteMatch
 {
-    static private $routes = [];
-    static private $activeController = null;
-    static private $serverUrl = null;
+    private array $routes = [];
+    private ?string $activeController = null;
+    private array $serverUrl;
+    private RouteValidator $routeValidator;
+    private RouteParam $routeParams;
 
-    static private function resolve(string $urlMain,AbstractController $controller,string $name, ?string $value = null) : void
+    public function __construct()
+    {
+        $this->routeValidator = new RouteValidator();
+        $this->routeParams = new RouteParam();
+    }
+
+    private function resolve(string $urlMain,AbstractController $controller, string $name, bool $home) : void
     {
         $urls = explode('/',$urlMain);
+        $this->serverUrl = explode('/',$_SERVER['REQUEST_URI']);
 
-        self::$serverUrl = ($value !== null) ? explode('/',$value) : explode('/',$_SERVER['REQUEST_URI']);
-
-        if(self::$serverUrl === null) {
-            self::validateActiveRoute($urls, self::$serverUrl);
+        if($this->serverUrl === null) {
+            $this->routeValidator->validateActiveRoute($urls, $this->serverUrl);
         }
 
         foreach ($urls as $url){
             $pattern = '/\{([a-zA-Z]+):([a-zA-Z]+)\}/';
             preg_match($pattern, $url, $matches);
             if(count($matches) === 3) {
-                self::validateUrl($matches);
+                $this->routeValidator->validateUrl($matches);
             }
         }
 
-        if(self::isMatched($urls,self::$serverUrl,$name) && self::$activeController === null){
-            self::$activeController = $name;
+        if($this->isMatched($urls,$this->serverUrl) && $this->activeController === null){
+            $this->activeController = $name;
             $controller->setControllerRoute(
                 new Route(
                     $urlMain,
                     null,
                     $name,
-                    self::getParamsFormUrl($urls)
+                    $this->routeParams->getParams($urls,$this->serverUrl)
+                )
+            );
+            $controller->main();
+        }
+
+        if($home && $this->activeController === null){
+            $this->activeController = $name;
+            $controller->setControllerRoute(
+                new Route(
+                    $urlMain,
+                    null,
+                    $name,
+                    []
                 )
             );
             $controller->main();
         }
     }
 
-    static public function getRouteAsObject(string $name,array $params = []) : ?Route
-    {
-        foreach (self::$routes as $routeEl){
-            if( null !== $name && $name === $routeEl->getName() ){
-                return new Route(
-                    (count($params))? self::setParamsForActiveRoute($routeEl,$params) : $routeEl->getUrl(),
-                    $routeEl->getController(),
-                    $routeEl->getName(),
-                    $params
-                );
-            }
-        }
-
-        return null;
-    }
-
-    static private function setParamsForActiveRoute(Route $route, array $params) : string
-    {
-        $urls = explode('/',$route->getUrl());
-        foreach ($urls as $key => $url) {
-            $pattern = '/\{([a-zA-Z]+):([a-zA-Z]+)\}/';
-            preg_match($pattern, $url, $matches);
-
-            if(count($matches)===3) {
-                $urls[$key]=$params[$matches[2]];
-            }
-
-        }
-
-        return self::$serverUrl = implode("/", $urls);
-    }
-
-    static private function getParamsFormUrl($urls) : array
-    {
-        $params = [];
-
-        foreach ($urls as $key => $url) {
-            $pattern = '/\{([a-zA-Z]+):([a-zA-Z]+)\}/';
-            preg_match($pattern, $url, $matches);
-
-            if(count($matches) === 3) {
-                $params[$matches[2]] = self::$serverUrl[$key];
-            }
-        }
-
-        return $params;
-    }
-
-    static public function setHomeRouteIfNotActiveRoute() : void
-    {
-        self::setActiveRoute('home');
-    }
-
-    static public function setActiveRoute(?string $name = null,array $params = []) : void
-    {
-        foreach (self::$routes as $routeEl){
-            if( null !== $name && $name === $routeEl->getName()){
-                if (count($params)){
-                    self::setParamsForActiveRoute($routeEl,$params);
-                }
-                self::resolve(
-                    $routeEl->getUrl(),
-                    $routeEl->getController(),
-                    $routeEl->getName(),
-                );
-            }
-            self::resolve(
-                $routeEl->getUrl(),
-                $routeEl->getController(),
-                $routeEl->getName(),
-            );
-
-        }
-    }
-
-    static private function isMatched(array $urls,array $serverUrls, string $name) : bool
+    private function isMatched(array $urls,array $serverUrls) : bool
     {
         $urlMatchArray = [];
 
@@ -144,46 +89,72 @@ class RouteMatch
             }
         }
 
-        if($name === 'home'){
-            return true;
-        }
-
         return (count($urlMatchArray) === count($serverUrls)-1);
     }
 
-    static private function validateUrl(array $matches) : void
+    public function addRoute(array $route) : void
     {
-        if($matches[1] !== 'string' && $matches[1] !== 'int'){
-            throw new RouteException("Invalid type in Route !");
-        }
-    }
-
-    static private function validateActiveRoute(array $urls,array $serverUrls) : void
-    {
-        if(count($urls) !== count($serverUrls)){
-            throw new RouteException("Invalid data for Route !");
-        }
-    }
-
-    static public function checkIfRouteExist() : void
-    {
-        if(self::$activeController === null){
-            throw new RouteException("Route not Exist !");
-        }
-    }
-
-    static public function addRoute(array $route) : void
-    {
-        foreach (self::$routes as $routeEl){
+        $countHome = 0;
+        foreach ($this->routes as $routeEl){
             if($route['name'] === $routeEl->getName()){
                 throw new RouteException("Route with this name already exist !");
             }
+
+            if(true === $routeEl->isHome() && $countHome < 1){
+                throw new RouteException("Cant be more then one controller home !");
+            }
+            $countHome++;
         }
-        self::$routes[] = new Route(
+
+        $this->routes[] = new Route(
             $route['url'],
             $route['Controller'],
             $route['name'],
-            []
+            [],
+            (isset($route['home'])) ? $route['home'] : false
         );
+    }
+
+    public function setRoute() : void
+    {
+        foreach ($this->routes as $routeEl){
+            $this->resolve(
+                $routeEl->getUrl(),
+                $routeEl->getController(),
+                $routeEl->getName(),
+                false
+            );
+        }
+
+        if(null === $this->activeController){
+            foreach ($this->routes as $routeEl){
+                if($routeEl->isHome()) {
+                    $this->resolve(
+                        $routeEl->getUrl(),
+                        $routeEl->getController(),
+                        $routeEl->getName(),
+                        true
+                    );
+                }
+            }
+        }
+
+        $this->routeValidator->checkIfRouteExist($this->activeController);
+    }
+
+    public function getRouteAsObject(string $name,array $params = []) : ?Route
+    {
+        foreach ($this->routes as $routeEl){
+            if( null !== $name && $name === $routeEl->getName() ){
+                return new Route(
+                    (count($params))? $this->routeParams->setParams($routeEl,$params) : $routeEl->getUrl(),
+                    $routeEl->getController(),
+                    $routeEl->getName(),
+                    $params
+                );
+            }
+        }
+
+        return null;
     }
 }

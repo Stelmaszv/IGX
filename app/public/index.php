@@ -1,5 +1,11 @@
 <?php
 require('../vendor/autoload.php');
-require('../server.php');
+
+use App\Core\Route\RouteMatch;
+
+$routeMatch = new RouteMatch();
+require('../route.php');
+
+$routeMatch->setRoute();
 ?>
 

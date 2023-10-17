@@ -10,13 +10,15 @@ class Route
     private ?AbstractController $controller;
     private ?string $name;
     private array $params;
+    private bool $home;
 
-    function __construct(string $url, ?AbstractController $controller,?string $name, $params = [])
+    function __construct(string $url, ?AbstractController $controller,?string $name, array $params = [],bool $home = false)
     {
         $this->url = $url;
         $this->controller = $controller;
         $this->name = $name;
         $this->params = $params;
+        $this->home = $home;
     }
 
     public function getName(): ?string
@@ -37,6 +39,11 @@ class Route
     public function getUrl(): string
     {
         return $this->url;
+    }
+
+    public function isHome(): bool
+    {
+        return $this->home;
     }
 
 
