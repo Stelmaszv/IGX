@@ -6,7 +6,7 @@ use PHPUnit\Framework\TestCase;
 class RouteTest extends TestCase
 {
     /** @test */
-    public function RouteSuccess() {
+    Public Function RouteSuccess() {
         $route = new Route(
           'url',
           null,
@@ -20,7 +20,5 @@ class RouteTest extends TestCase
         $this->assertEquals($route->getName(),'name');
         $this->assertEquals($route->getParams(),[]);
         $this->assertEquals($route->isHome(),false);
-
     }
-
 }

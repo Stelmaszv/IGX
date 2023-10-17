@@ -21,7 +21,6 @@ class RouteMatch
     private function resolve(string $urlMain,AbstractController $controller, string $name, bool $home) : void
     {
         $urls = explode('/',$urlMain);
-
         $this->serverUrl = explode('/',$_SERVER['REQUEST_URI']);
 
         if($this->serverUrl === null) {

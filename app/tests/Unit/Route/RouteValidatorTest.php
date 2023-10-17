@@ -7,7 +7,7 @@ use App\Core\Route\RouteValidator;
 class RouteValidatorTest extends TestCase
 {
     /** @test */
-    public function validateUrlFailure()
+    Public Function validateUrlFailure()
     {
         $failure = false;
         try {
@@ -23,7 +23,7 @@ class RouteValidatorTest extends TestCase
     }
 
     /** @test */
-    public function validateUrlSuccess()
+    Public Function validateUrlSuccess()
     {
         $success = true;
         $routeValidator = new RouteValidator();
@@ -38,7 +38,7 @@ class RouteValidatorTest extends TestCase
         $this->assertEquals($success, true);
     }
 
-    public function validateActiveRouteSuccess(){
+    Public Function validateActiveRouteSuccess(){
         $success = true;
         $routeValidator = new RouteValidator();
         try {
@@ -50,7 +50,7 @@ class RouteValidatorTest extends TestCase
         $this->assertEquals($success, true);
     }
 
-    public function validateActiveRouteFailure(){
+    Public Function validateActiveRouteFailure(){
         $failure = false;
         $routeValidator = new RouteValidator();
         try {

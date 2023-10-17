@@ -19,7 +19,6 @@ class RouteMatchTest extends TestCase
                 'name' => 'Route'
             ]
         );
-
         $ReflectionClass = new ReflectionClass($routeMatch);
         $routes = $ReflectionClass->getProperty('routes');
         $routes->setAccessible(true);
@@ -59,7 +58,6 @@ class RouteMatchTest extends TestCase
     /** @test */
     Public Function getRouteAsObjectSuccess(){
         $routeMatch = new RouteMatch();
-
         $routeMatch->addRoute(
             [
                 'url' => '/catese/{string:category}/{int:id}',
@@ -67,7 +65,6 @@ class RouteMatchTest extends TestCase
                 'name' => 'Route',
             ]
         );
-
         $routeMatch->addRoute(
             [
                 'url' => '/',
@@ -76,9 +73,7 @@ class RouteMatchTest extends TestCase
                 'home' => true
             ]
         );
-
         $routeMatch->setRoute();
-
         $routeMatch->getRouteAsObject('home');
 
         $this->assertEquals($routeMatch->getRouteAsObject('home') instanceof Route, true);
@@ -86,7 +81,7 @@ class RouteMatchTest extends TestCase
     }
 
     /** @test */
-    public function validateUrlFailure()
+    Public Function validateUrlFailure()
     {
         $failure = false;
         try {
@@ -100,7 +95,4 @@ class RouteMatchTest extends TestCase
 
         $this->assertEquals($failure, true);
     }
-
-
-
 }
