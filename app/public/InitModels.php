@@ -16,7 +16,6 @@ function loopExceute(array $loop): void
     }
 }
 
-
 function Exceute(string $file) : void
 {
     if(!is_dir($file)){
@@ -45,6 +44,4 @@ function Exceute(string $file) : void
 }
 
 loopExceute($files);
-
-
 ?>
