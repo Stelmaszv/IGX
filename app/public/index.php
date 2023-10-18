@@ -4,11 +4,14 @@ require('../vendor/autoload.php');
 use App\Core\Model\AbstractModel;
 use App\Core\Route\RouteMatch;
 use App\Infrastructure\DB\Connect;
+use App\Main\Model\Cats;
 
 $connect = Connect::getInstance();
-define('CONNECT', serialize($connect));
 $routeMatch = new RouteMatch();
 require('../route.php');
+
+$cats = new Cats();
+$cats->initModel();
 
 $routeMatch->setRoute();
 ?>

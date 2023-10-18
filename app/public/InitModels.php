@@ -2,11 +2,6 @@
 require('../vendor/autoload.php');
 
 use App\Core\Model\AbstractModel;
-use App\Infrastructure\DB\Connect;
-
-$connect = Connect::getInstance();
-define('CONNECT', serialize($connect));
-
 $files = glob('../src/Main/Model/*');
 
 function loopExceute(array $loop): void

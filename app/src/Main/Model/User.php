@@ -3,7 +3,7 @@
 namespace App\Main\Model;
 
 use App\Core\Model\AbstractModel;
-use App\Main\Model\Fields\FieldVarchar;
+use App\Core\Model\Fields\FieldVarchar;
 
 class User extends AbstractModel
 {
