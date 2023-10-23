@@ -19,7 +19,7 @@ abstract class AbstractModel
 
     abstract protected function initFields() : void;
 
-    protected function addField(mixed $field) : void
+    protected function addField(Field $field) : void
     {
         $this->fields[] = $field;
     }
