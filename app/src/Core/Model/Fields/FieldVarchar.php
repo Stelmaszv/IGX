@@ -11,7 +11,7 @@ class FieldVarchar implements Field
     private int $length;
     private bool $isNull;
 
-    public function __construct(string $name,int $length,bool $isNull){
+    public function __construct(string $name,int $length,bool $isNull = false){
         $this->name = $name;
 
         if ($length > 256) {

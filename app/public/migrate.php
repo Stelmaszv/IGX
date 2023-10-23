@@ -27,6 +27,7 @@ foreach (scandir('./migrate') as $query) {
             fclose($fileHandle);
         }
 
-        echo 'Generated migration From '.$query;
+        echo 'Generated migration from file - '.$query;
+        echo '<br>';
     }
 }
