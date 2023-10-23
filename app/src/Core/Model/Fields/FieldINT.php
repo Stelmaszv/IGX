@@ -16,6 +16,11 @@ class FieldINT implements Field
         ?int $length = null,
         bool $isNull = false
     ){
+
+        if ($length > 255) {
+            throw new ModelException("Int length is grater ten 255 ! ");
+        }
+
         $this->name = $name;
         $this->length = $length;
         $this->isNull = $isNull;
