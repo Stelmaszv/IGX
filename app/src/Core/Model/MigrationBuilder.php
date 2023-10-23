@@ -3,12 +3,11 @@
 namespace App\Core\Model;
 
 use App\Infrastructure\DB\DBInterface;
-use App\Settings\DBSettings;
 
 class MigrationBuilder
 {
     private string $name;
-    private string $sql;
+    private array $sqlQuery;
     private array $fields;
     private DBInterface $engin;
 
@@ -24,12 +23,14 @@ class MigrationBuilder
 
     public function build() : void
     {
-        $this->sql = "CREATE TABLE if NOT EXISTS ".$this->engin->escapeString($this->name)." (`id` INT NOT NULL AUTO_INCREMENT , PRIMARY KEY (`id`))";
+        if($this->checkIfTableExist() == 0) {
+            $this->sqlQuery[] = ["CREATE TABLE if NOT EXISTS " . $this->engin->escapeString($this->name) . " (`id` INT NOT NULL AUTO_INCREMENT , PRIMARY KEY (`id`))"];
+        }
 
         foreach ($this->fields as $colum){
             if(!$this->checkIfColumnExist($colum->getName())) {
                 $null = ($colum->isNull()) ? 'NULL' : 'NOT NULL';
-                $this->sql .= " ALTER TABLE ".$this->engin->escapeString($this->name)." ADD `".$this->engin->escapeString($colum->getName())."` VARCHAR(".intval($colum->getLength()).") ".$null;
+                $this->sqlQuery[] = ["ALTER TABLE ".$this->engin->escapeString($this->name)." ADD `". $this->engin->escapeString($colum->getName())."` " . $colum->getFieldName() . " " . $null];
             }
         }
     }

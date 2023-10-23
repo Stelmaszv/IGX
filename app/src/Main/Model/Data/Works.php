@@ -11,7 +11,7 @@ class Works extends AbstractModel
     {
         $this->addField(new FieldVarchar(
             'name',
-            '256'
+            256
         ));
     }
 }

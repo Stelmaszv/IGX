@@ -10,9 +10,6 @@ $connect = Connect::getInstance();
 $routeMatch = new RouteMatch();
 require('../route.php');
 
-$cats = new Cats();
-$cats->initModel();
-
 $routeMatch->setRoute();
 ?>
 
