@@ -36,6 +36,30 @@ class MysqliEngin implements DBInterface
         }
     }
 
+    public function escapeString(string $word) : string
+    {
+        return mysqli_real_escape_string($this->com,$word);
+    }
+
+    public function countSQl(string $table, array $parrams) : int
+    {
+        $sql = "SELECT COUNT(*) FROM  ".$this->escapeString($table);
+        $parramEl = 0;
+
+        if(count($parrams) > 0){
+            $sql .= ' WHERE ';
+            foreach ($parrams as $parram){
+                if($parramEl > 0){
+                    $sql .= ' AND ';
+                }
+                $sql .= $parram['colum'].' = "'.$parram['value'].'"';
+                $parramEl ++;
+            }
+        }
+
+        return $this->getQueryLoop($sql)[0]['COUNT(*)'];
+    }
+
     function runQuery(string $sql, string $message = '', $array = []): string
     {
         try {
