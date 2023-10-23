@@ -31,10 +31,34 @@ class MigrationBuilder
             if(!$this->checkIfColumnExist($colum->getName())) {
                 $null = ($colum->isNull()) ? 'NULL' : 'NOT NULL';
                 $this->sqlQuery[] = "ALTER TABLE ".$this->engin->escapeString($this->name)." ADD `". $this->engin->escapeString($colum->getName())."` " . $colum->getFieldName() . " " . $null.";";
+            }else{
+                $this->checkColum($colum->getName() , $colum);
+            }
+        }
+
+        $fields = array_map(function ($field) {
+            return $field->getName();
+        }, $this->fields);
+
+        foreach ($this->showColumns() as $colum){
+            if (!in_array($colum["COLUMN_NAME"],$fields) && $colum["COLUMN_NAME"] !== 'id'){
+                $this->sqlQuery[] = "ALTER TABLE ".$this->engin->escapeString($this->name)." DROP `".$this->engin->escapeString($colum["COLUMN_NAME"])."`";
             }
         }
 
         file_put_contents('../public/migrate/'.$this->name.'.sql', implode("\n", $this->sqlQuery));
+    }
+
+    private function checkColum(string $columName, Field $colum) : void
+    {
+        $query = $this->engin->getQueryLoop("SHOW COLUMNS FROM ".$this->name.";");
+        foreach ($query as $columNameEl){
+            if($columNameEl['Field'] === $columName){
+                $null = ($colum->isNull()) ? 'NULL' : 'NOT NULL';
+                $this->sqlQuery[] = "ALTER TABLE ".$columNameEl['Field']." ".$this->engin->escapeString($this->name)." CHANGE `". $this->engin->escapeString($colum->getName())."` " . $colum->getFieldName() . " " . $null.";";
+            }
+
+        }
     }
 
     public function setName(string $name) : void

@@ -10,7 +10,7 @@ class User extends AbstractModel
     protected function initFields(): void
     {
         $this->addField(new FieldVarchar(
-            'name',
+            'names',
             256
         ));
     }

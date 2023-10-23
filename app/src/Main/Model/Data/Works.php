@@ -10,7 +10,7 @@ class Works extends AbstractModel
     protected function initFields(): void
     {
         $this->addField(new FieldVarchar(
-            'name',
+            'namec',
             256
         ));
     }
