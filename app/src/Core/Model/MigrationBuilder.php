@@ -6,7 +6,7 @@ use App\Infrastructure\DB\DBInterface;
 
 class MigrationBuilder
 {
-    private string $name;
+    private string $tableName;
     private array $sqlQuery = [];
     private array $fields;
     private DBInterface $engin;
@@ -24,13 +24,13 @@ class MigrationBuilder
     public function build() : void
     {
         if($this->checkIfTableExist() == 0) {
-            $this->sqlQuery[] = "CREATE TABLE if NOT EXISTS " . $this->engin->escapeString($this->name) . " (`id` INT NOT NULL AUTO_INCREMENT , PRIMARY KEY (`id`));";
+            $this->sqlQuery[] = "CREATE TABLE if NOT EXISTS " . $this->engin->escapeString($this->tableName) . " (`id` INT NOT NULL AUTO_INCREMENT , PRIMARY KEY (`id`));";
         }
 
         foreach ($this->fields as $colum){
-            if(!$this->checkIfColumnExist($colum->getName())) {
+            if(!$this->checkIfColumnExist($colum->getName()) || !$this->checkIfColumnExist($colum->getNevName())) {
                 $null = ($colum->isNull()) ? 'NULL' : 'NOT NULL';
-                $this->sqlQuery[] = "ALTER TABLE ".$this->engin->escapeString($this->name)." ADD `". $this->engin->escapeString($colum->getName())."` " . $colum->getFieldName() . " " . $null.";";
+                $this->sqlQuery[] = "ALTER TABLE ".$this->engin->escapeString($this->tableName)." ADD `". $this->engin->escapeString($colum->getName())."` " . $colum->getFieldName() . " " . $null.";";
             }else{
                 $this->checkColum($colum->getName() , $colum);
             }
@@ -42,20 +42,24 @@ class MigrationBuilder
 
         foreach ($this->showColumns() as $colum){
             if (!in_array($colum["COLUMN_NAME"],$fields) && $colum["COLUMN_NAME"] !== 'id'){
-                $this->sqlQuery[] = "ALTER TABLE ".$this->engin->escapeString($this->name)." DROP `".$this->engin->escapeString($colum["COLUMN_NAME"])."`";
+                $this->sqlQuery[] = "ALTER TABLE ".$this->engin->escapeString($this->tableName)." DROP `".$this->engin->escapeString($colum["COLUMN_NAME"])."`";
             }
         }
 
-        file_put_contents('../public/migrate/'.$this->name.'.sql', implode("\n", $this->sqlQuery));
+        echo '<pre>';
+        var_dump($this->sqlQuery);
+        echo '</pre>';
+
+        file_put_contents('../public/migrate/'.$this->tableName.'.sql', implode("\n", $this->sqlQuery));
     }
 
     private function checkColum(string $columName, Field $colum) : void
     {
-        $query = $this->engin->getQueryLoop("SHOW COLUMNS FROM ".$this->name.";");
+        $query = $this->engin->getQueryLoop("SHOW COLUMNS FROM ".$this->tableName.";");
         foreach ($query as $columNameEl){
             if($columNameEl['Field'] === $columName){
                 $null = ($colum->isNull()) ? 'NULL' : 'NOT NULL';
-                $this->sqlQuery[] = "ALTER TABLE ".$columNameEl['Field']." ".$this->engin->escapeString($this->name)." CHANGE `". $this->engin->escapeString($colum->getName())."` " . $colum->getFieldName() . " " . $null.";";
+                $this->sqlQuery[] = "ALTER TABLE ".$columNameEl['Field']." ".$this->engin->escapeString($this->tableName)." CHANGE `". $this->engin->escapeString($colum->getName())."` " . $colum->getNevName(). " " . $null.";";
             }
 
         }
@@ -64,10 +68,23 @@ class MigrationBuilder
     public function setName(string $name) : void
     {
         $fullName = explode('\\',$name);
-        $this->name = $fullName[count($fullName)-1];
+        $this->tableName = $fullName[count($fullName)-1];
     }
 
-    private function checkIfColumnExist($value){
+    public function getColumValue(string $columName) : ?array
+    {
+        $query = $this->engin->getQueryLoop("SHOW COLUMNS FROM ".$this->tableName.";");
+        foreach ($query as $columNameEl) {
+            if ($columNameEl['Field'] === $columName) {
+                return $columNameEl;
+            }
+
+        }
+
+        return null;
+    }
+
+    public function checkIfColumnExist($value){
         foreach ($this->showColumns() as $columName){
             if($columName['COLUMN_NAME'] === $value){
                 return true;
@@ -79,7 +96,7 @@ class MigrationBuilder
 
     private function showColumns() : array
     {
-        return $this->engin->getQueryLoop("SELECT column_name FROM information_schema.columns WHERE table_name = '$this->name'");
+        return $this->engin->getQueryLoop("SELECT column_name FROM information_schema.columns WHERE table_name = '$this->tableName'");
     }
 
     private function checkIfTableExist() : int
@@ -91,7 +108,7 @@ class MigrationBuilder
             ],
             [
                 'colum' => 'table_name',
-                'value' => $this->name
+                'value' => $this->tableName
             ],
         ]);
     }

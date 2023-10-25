@@ -8,7 +8,7 @@ abstract class AbstractModel
 {
     private array $fields;
     private DBInterface $engin;
-    private MigrationBuilder $migrationBuilder;
+    public MigrationBuilder $migrationBuilder;
 
     public function __construct()
     {

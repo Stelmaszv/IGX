@@ -12,17 +12,20 @@ class Cats extends AbstractModel
     protected function initFields(): void
     {
         $this->addField(new FieldVarchar(
+            $this,
             'name',
             256,
             true
         ));
         $this->addField(new FieldINT(
+            $this,
             'counter',
             255,
             true
         ));
 
         $this->addField(new FieldTEXT(
+            $this,
             'desc',
             256,
             true
