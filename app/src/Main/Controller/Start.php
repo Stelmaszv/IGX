@@ -11,7 +11,7 @@ class Start extends AbstractController
 {
     function main() : void
     {
-        $this->setTemplete('../templete/home.html',
+        $this->setTemplate('../templete/home.html',
             [
             'name' => $this->getRoute()->getName(),
             'loop' => [
@@ -21,6 +21,6 @@ class Start extends AbstractController
             'zero' => true
             ]
         );
-        echo $this->getTemplete();
+        echo $this->getTemplate();
     }
 }
