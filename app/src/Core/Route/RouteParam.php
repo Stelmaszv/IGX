@@ -6,21 +6,21 @@ class RouteParam
 {
     public function setParams(Route $route, array $params) : string
     {
-        $urls = explode('/',$route->getUrl());
+        $urls = explode('/', $route->getUrl());
+
         foreach ($urls as $key => $url) {
             $pattern = '/\{([a-zA-Z]+):([a-zA-Z]+)\}/';
             preg_match($pattern, $url, $matches);
 
-            if(count($matches)===3) {
+            if(count($matches) === 3 && isset($params[$matches[2]])) {
                 $urls[$key] = $params[$matches[2]];
             }
-
         }
 
         return implode("/", $urls);
     }
 
-    public function getParams(array $urls,array $serverUrl) : array
+    public function getParams(array $urls, array $serverUrl) : array
     {
         $params = [];
 
@@ -28,7 +28,7 @@ class RouteParam
             $pattern = '/\{([a-zA-Z]+):([a-zA-Z]+)\}/';
             preg_match($pattern, $url, $matches);
 
-            if(count($matches) === 3) {
+            if(count($matches) === 3 && isset($serverUrl[$key])) {
                 $params[$matches[2]] = $serverUrl[$key];
             }
         }

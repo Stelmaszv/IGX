@@ -7,18 +7,19 @@ use App\Core\Route\Route;
 abstract class AbstractController
 {
     private ?Route $route;
-    private VuexTemplete $vuexTemplete;
+    private ?VuexTemplate $vuexTemplate;
 
     abstract public function main() : void;
 
-    protected function setTemplete(string $file ,array $attributes = []){
-        $this->vuexTemplete = new VuexTemplete($file);
-        $this->vuexTemplete->getVarables($attributes);
+    protected function setTemplate(string $file ,array $attributes = []) : void
+    {
+        $this->vuexTemplate = new VuexTemplate($file);
+        $this->vuexTemplate->setVariables($attributes);
     }
 
-    public function getTemplete() : string
+    public function getTemplate() : string
     {
-        return $this->vuexTemplete->CGet();
+        return $this->vuexTemplate?->render();
     }
 
     public function setControllerRoute(Route $route) : void

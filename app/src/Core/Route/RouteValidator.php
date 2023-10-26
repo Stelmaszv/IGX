@@ -6,21 +6,23 @@ class RouteValidator
 {
     public function validateUrl(array $matches) : void
     {
-        if($matches[1] !== 'string' && $matches[1] !== 'int'){
+        $validTypes = ['string', 'int'];
+
+        if (!in_array($matches[1], $validTypes)) {
             throw new RouteException("Invalid type in Route !");
         }
     }
 
-    public function validateActiveRoute(array $urls,array $serverUrls) : void
+    public function validateActiveRoute(array $urls, array $serverUrls) : void
     {
-        if(count($urls) !== count($serverUrls)){
+        if (count($urls) !== count($serverUrls)) {
             throw new RouteException("Invalid data for Route !");
         }
     }
 
-    public function checkIfRouteExist(string $activeController) : void
+    public function checkIfRouteExist(?string $activeController) : void
     {
-        if($activeController === null){
+        if ($activeController === null) {
             throw new RouteException("Route not Exist !");
         }
     }
