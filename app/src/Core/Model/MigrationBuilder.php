@@ -6,69 +6,64 @@ use App\Infrastructure\DB\DBInterface;
 
 class MigrationBuilder
 {
-    private string $name;
-    private array $sqlQuery;
+    private string $tableName;
+    private array $sqlQuery = [];
     private array $fields;
-    private DBInterface $engin;
+    private DBInterface $engine;
+    private Table $table;
 
-    public function __construct(DBInterface $engin)
+    public function __construct(DBInterface $engine)
     {
-        $this->engin = $engin;
+        $this->engine = $engine;
+        $this->table = new Table($engine);
     }
 
-    public function  setFields(array $fields): void
+    public function setFields(array $fields): void
     {
         $this->fields = $fields;
     }
 
-    public function build() : void
+    public function setName(string $name): void
     {
-        if($this->checkIfTableExist() == 0) {
-            $this->sqlQuery[] = ["CREATE TABLE if NOT EXISTS " . $this->engin->escapeString($this->name) . " (`id` INT NOT NULL AUTO_INCREMENT , PRIMARY KEY (`id`))"];
+        $fullName = explode('\\', $name);
+        $this->tableName = end($fullName);
+        $this->table->setTable($this->tableName);
+    }
+
+    public function build(): void
+    {
+        $data = [
+            'columns' => $this->table->getColumns(),
+            'fields' => $this->fields,
+        ];
+
+        if ($this->table->checkIfTableExist() === 0) {
+            $this->sqlQuery[] = "CREATE TABLE if NOT EXISTS {$this->engine->escapeString($this->tableName)} (`id` INT NOT NULL AUTO_INCREMENT , PRIMARY KEY (`id`));";
         }
 
-        foreach ($this->fields as $colum){
-            if(!$this->checkIfColumnExist($colum->getName())) {
-                $null = ($colum->isNull()) ? 'NULL' : 'NOT NULL';
-                $this->sqlQuery[] = ["ALTER TABLE ".$this->engin->escapeString($this->name)." ADD `". $this->engin->escapeString($colum->getName())."` " . $colum->getFieldName() . " " . $null];
+        foreach ($data['fields'] as $key => $field) {
+
+            if (isset($data['columns'][$key]['COLUMN_NAME'])) {
+                $field->setActualName($data['columns'][$key]['COLUMN_NAME']);
+            }
+
+            if (!$this->table->checkIfColumnExist($field->getActualName())) {
+                $null = ($field->isNull()) ? 'NULL' : 'NOT NULL';
+                $this->sqlQuery[] = "ALTER TABLE {$this->engine->escapeString($this->tableName)} ADD {$this->engine->escapeString($field->getName())} {$field->getFieldName()} {$null} COMMENT '{{{$key}}}';";
+            } else {
+                $this->sqlQuery[] = $this->table->checkColumn($field, $data['columns'][$key]);
             }
         }
-    }
 
-    public function setName(string $name) : void
-    {
-        $fullName = explode('\\',$name);
-        $this->name = $fullName[count($fullName)-1];
-    }
+        $fields = array_map(fn($field) => $field->getName(), $this->fields);
 
-    private function checkIfColumnExist($value){
-        foreach ($this->showColumns() as $columName){
-            if($columName['COLUMN_NAME'] === $value){
-                return true;
+        foreach ($this->table->getColumns() as $column) {
+            if (!in_array($column["COLUMN_NAME"], $fields) && $column["COLUMN_NAME"] !== 'id') {
+                $this->sqlQuery[] = "ALTER TABLE {$this->engine->escapeString($this->tableName)} DROP {$this->engine->escapeString($column["COLUMN_NAME"])}";
             }
         }
 
-        return false;
+        file_put_contents('../public/migrate/'.$this->tableName.'.sql', implode("\n", $this->sqlQuery));
     }
-
-    private function showColumns() : array
-    {
-        return $this->engin->getQueryLoop("SELECT column_name FROM information_schema.columns WHERE table_name = '$this->name'");
-    }
-
-    private function checkIfTableExist() : int
-    {
-        return $this->engin->countSQl('information_schema.tables',[
-            [
-                'colum' => 'table_schema',
-                'value' => 'php_docker'
-            ],
-            [
-                'colum' => 'table_name',
-                'value' => $this->name
-            ],
-        ]);
-    }
-
 
 }

@@ -18,10 +18,14 @@ class Cats extends AbstractModel
         ));
         $this->addField(new FieldINT(
             'counter',
+            255,
+            true
         ));
 
         $this->addField(new FieldTEXT(
-            'desc',
+            'description',
+            188,
+            true
         ));
     }
 

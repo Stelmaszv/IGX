@@ -10,37 +10,52 @@ class FieldINT implements Field
     private string $name;
     private ?int $length;
     private bool $isNull;
+    private ?string $actualName = null;
 
     public function __construct(
         string $name,
         ?int $length = null,
         bool $isNull = false
-    ){
+    ) {
+        if ($length !== null && $length > 255) {
+            throw new ModelException("Int length cannot exceed 255.");
+        }
+
         $this->name = $name;
         $this->length = $length;
         $this->isNull = $isNull;
     }
 
-    public function isNull() : bool
+    public function setActualName(string $name): void
+    {
+        $this->actualName = $name;
+    }
+
+    public function getActualName(): ?string
+    {
+        return $this->actualName;
+    }
+
+    public function isNull(): bool
     {
         return $this->isNull;
     }
 
-    public function getName() : string
+    public function getName(): string
     {
         return $this->name;
     }
 
-    public function getLength() : ?int
+    public function getLength(): ?int
     {
         return $this->length;
     }
 
-    public function getFieldName() : string
+    public function getFieldName(): string
     {
-        if($this->getLength()){
-            return "INT(".$this->getLength().")";
-        }else{
+        if ($this->getLength() !== null) {
+            return "INT({$this->getLength()})";
+        } else {
             return "INT";
         }
     }

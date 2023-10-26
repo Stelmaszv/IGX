@@ -2,44 +2,48 @@
 
 namespace App\Infrastructure\DB;
 
-use App\Infrastructure\DB\Engines\MysqliEngin;
-use App\Infrastructure\DB\Engines\PDOEngin;
+use App\Infrastructure\DB\Engines\MysqliEngine;
+use App\Infrastructure\DB\Engines\PDOEngine;
 use App\Settings\DBSettings;
 
 class Connect
 {
-    private ?DBInterface $engin;
-    private array $engins = ['PDO','MYSQLI'];
+    private ?DBInterface $engine;
+    private array $engines = ['PDO', 'MYSQLI'];
 
     private function __construct()
     {
-        $this->engin=$this->setEngin(DBSettings::ENGINE);
+        $this->engine = $this->setEngine(DBSettings::ENGINE);
     }
 
-    private function setEngin(string $engin) :?DBInterface
+    private function setEngine(string $engine): ?DBInterface
     {
-        if (!in_array($engin,$this->engins)){
-            throw new DBException('Invalid Engin !');
+        if (!in_array($engine, $this->engines)) {
+            throw new DBException('Invalid Engine!');
         }
 
-        switch($engin) {
+        switch($engine) {
             case 'PDO':
-                return new PDOEngin();
+                return new PDOEngine();
             case 'MYSQLI':
-                return new MysqliEngin();
+                return new MysqliEngine();
         }
 
         return null;
     }
 
-    public function getEngin() : ?DBInterface
+    public function getEngine(): ?DBInterface
     {
-        return $this->engin;
+        return $this->engine;
     }
 
-    public static function getInstance()
+    public static function getInstance(): self
     {
-        return new static();
-    }
+        static $instance = null;
+        if ($instance === null) {
+            $instance = new static();
+        }
 
+        return $instance;
+    }
 }
