@@ -2,7 +2,6 @@
 
 namespace App\Core\Model\Fields;
 
-use App\Core\Model\AbstractModel;
 use App\Core\Model\Field;
 use App\Core\Model\ModelException;
 
@@ -17,10 +16,9 @@ class FieldINT implements Field
         string $name,
         ?int $length = null,
         bool $isNull = false
-    ){
-
-        if ($length > 255) {
-            throw new ModelException("Int length is grater ten 255 ! ");
+    ) {
+        if ($length !== null && $length > 255) {
+            throw new ModelException("Int length cannot exceed 255.");
         }
 
         $this->name = $name;
@@ -33,32 +31,31 @@ class FieldINT implements Field
         $this->actualName = $name;
     }
 
-
     public function getActualName(): ?string
     {
         return $this->actualName;
     }
 
-    public function isNull() : bool
+    public function isNull(): bool
     {
         return $this->isNull;
     }
 
-    public function getName() : string
+    public function getName(): string
     {
         return $this->name;
     }
 
-    public function getLength() : ?int
+    public function getLength(): ?int
     {
         return $this->length;
     }
 
-    public function getFieldName() : string
+    public function getFieldName(): string
     {
-        if($this->getLength()){
-            return "INT(".$this->getLength().")";
-        }else{
+        if ($this->getLength() !== null) {
+            return "INT({$this->getLength()})";
+        } else {
             return "INT";
         }
     }

@@ -6,20 +6,20 @@ use App\Infrastructure\DB\DBInterface;
 
 abstract class AbstractModel
 {
-    private array $fields;
-    private DBInterface $engin;
+    private array $fields = [];
+    private DBInterface $engine;
     public MigrationBuilder $migrationBuilder;
 
     public function __construct()
     {
         $connect = Connect::getInstance();
-        $this->engin = $connect->getEngin();
-        $this->migrationBuilder = new MigrationBuilder($this->engin);
+        $this->engine = $connect->getEngine();
+        $this->migrationBuilder = new MigrationBuilder($this->engine);
     }
 
-    abstract protected function initFields() : void;
+    abstract protected function initFields(): void;
 
-    protected function addField(Field $field) : void
+    protected function addField(Field $field): void
     {
         $this->fields[] = $field;
     }
@@ -31,5 +31,4 @@ abstract class AbstractModel
         $this->migrationBuilder->setFields($this->fields);
         $this->migrationBuilder->build();
     }
-
 }

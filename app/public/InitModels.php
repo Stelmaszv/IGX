@@ -25,15 +25,12 @@ function execute(string $file): void
         $nameSpace = str_replace($className, "", $nameSpace);
         $nameSpace = str_replace("/", "\\", $nameSpace);
 
-        try {
-            $model = new $nameSpace();
-            if ($model instanceof AbstractModel) {
-                echo "Init Model - $modelName <br>";
-                $model->initModel();
-            }
-        } catch (ArgumentCountError $e) {
-            echo '';
+        $model = new $nameSpace();
+        if ($model instanceof AbstractModel) {
+            echo "Init Model - $modelName <br>";
+            $model->initModel();
         }
+
     } else {
         $files = glob("$file/*");
         loopExecute($files);

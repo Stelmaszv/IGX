@@ -2,11 +2,8 @@
 
 namespace App\Core\Model\Fields;
 
-use App\Core\Model\AbstractModel;
 use App\Core\Model\Field;
 use App\Core\Model\ModelException;
-use App\Infrastructure\DB\Connect;
-use App\Infrastructure\DB\DBInterface;
 
 class FieldVarchar implements Field
 {
@@ -15,10 +12,10 @@ class FieldVarchar implements Field
     private int $length;
     private bool $isNull;
 
-    public function __construct(string $name,int $length,bool $isNull = false){
-
+    public function __construct(string $name, int $length, bool $isNull = false)
+    {
         if ($length > 256) {
-            throw new ModelException("Varchar length is grater ten 256 ! ");
+            throw new ModelException("Varchar length cannot exceed 256 characters.");
         }
 
         $this->name = $name;
@@ -36,23 +33,23 @@ class FieldVarchar implements Field
         return $this->actualName;
     }
 
-    public function isNull() : bool
+    public function isNull(): bool
     {
         return $this->isNull;
     }
 
-    public function getName() : string
+    public function getName(): string
     {
         return $this->name;
     }
 
-    public function getLength() : int
+    public function getLength(): int
     {
         return $this->length;
     }
 
-    public function getFieldName() : string
+    public function getFieldName(): string
     {
-        return "VARCHAR(".$this->getLength().")";
+        return "VARCHAR({$this->getLength()})";
     }
 }

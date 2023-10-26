@@ -5,7 +5,7 @@ use App\Infrastructure\DB\Connect;
 use App\Infrastructure\DB\DBException;
 
 $connect = Connect::getInstance();
-$engin = $connect->getEngin();
+$engin = $connect->getEngine();
 
 foreach (scandir('./migrate') as $query) {
     $extension = pathinfo($query, PATHINFO_EXTENSION);
