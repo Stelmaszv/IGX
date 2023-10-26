@@ -100,7 +100,7 @@ class RouteMatch
             }
 
             if (true === $routeEl->isHome() && $countHome < 1) {
-                throw new RouteException("Cannot have more than one controller as home!");
+                throw new RouteException("Cannot have more than one controller set as home!");
             }
             $countHome++;
         }
