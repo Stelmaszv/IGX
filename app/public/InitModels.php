@@ -1,39 +1,41 @@
 <?php
+
 require('../vendor/autoload.php');
 
 use App\Core\Model\AbstractModel;
+
 $files = glob('../src/Main/Model/*');
 
 function loopExecute(array $loop): void
 {
-    foreach ($loop as $file){
-        Execute($file);
+    foreach ($loop as $file) {
+        execute($file);
     }
 }
 
-function Execute(string $file) : void
+function execute(string $file): void
 {
-    if(!is_dir($file)){
-        $urls = explode('/',$file);
-        $className = $urls[count($urls)-1];
-        $ext = explode('.',$className);
+    if (!is_dir($file)) {
+        $urls = explode('/', $file);
+        $className = end($urls);
         $modelName = basename($file, '.php');
+
         $nameSpace = str_replace("../src/", "App/", $file);
         $nameSpace = str_replace(".php", "", $nameSpace);
         $nameSpace = str_replace($className, "", $nameSpace);
         $nameSpace = str_replace("/", "\\", $nameSpace);
-        $nameSpace = str_replace('/'.$ext[0], "", $nameSpace);
+
         try {
             $model = new $nameSpace();
-            if ($model Instanceof AbstractModel){
+            if ($model instanceof AbstractModel) {
                 echo "Init Model - $modelName <br>";
                 $model->initModel();
             }
-        }catch (ArgumentCountError){
+        } catch (ArgumentCountError $e) {
             echo '';
         }
-    }else{
-        $files = glob($file.'/*');
+    } else {
+        $files = glob("$file/*");
         loopExecute($files);
     }
 }
