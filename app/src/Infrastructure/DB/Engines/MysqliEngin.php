@@ -52,7 +52,7 @@ class MysqliEngin implements DBInterface
                 if($parramEl > 0){
                     $sql .= ' AND ';
                 }
-                $sql .= $parram['colum'].' = "'.$parram['value'].'"';
+                $sql .= $parram['column'].' = "'.$parram['value'].'"';
                 $parramEl ++;
             }
         }

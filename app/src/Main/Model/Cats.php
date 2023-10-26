@@ -23,7 +23,7 @@ class Cats extends AbstractModel
         ));
 
         $this->addField(new FieldTEXT(
-            'desc2',
+            'desc',
             256,
             true
         ));
