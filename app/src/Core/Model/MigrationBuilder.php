@@ -51,7 +51,7 @@ class MigrationBuilder
                 $null = ($field->isNull()) ? 'NULL' : 'NOT NULL';
                 $this->sqlQuery[] = "ALTER TABLE {$this->engine->escapeString($this->tableName)} ADD {$this->engine->escapeString($field->getName())} {$field->getFieldName()} {$null} COMMENT '{{{$key}}}';";
             } else {
-                $this->sqlQuery[] = $this->table->checkColumn($field, $data['columns'][$key]);
+                $this->sqlQuery[] = $this->table->updateColumn($field, $data['columns'][$key]);
             }
         }
 

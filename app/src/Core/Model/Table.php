@@ -37,7 +37,7 @@ class Table
         return $columnsArray;
     }
 
-    public function checkColumn(Field $field, array $column): string
+    public function updateColumn(Field $field, array $column): string
     {
         $null = ($field->isNull()) ? 'NULL' : 'NOT NULL';
         return "ALTER TABLE `{$this->engine->escapeString($this->tableName)}` CHANGE `{$field->getActualName()}` `{$field->getName()}` {$field->getFieldName()} {$null} COMMENT '{$column['COLUMN_COMMENT']}';";
