@@ -12,7 +12,13 @@ class Route
     private array $params;
     private bool $home;
 
-    function __construct(string $url, ?AbstractController $controller,?string $name, array $params = [],bool $home = false)
+    public function __construct(
+        string $url,
+        ?AbstractController $controller,
+        ?string $name,
+        array $params = [],
+        bool $home = false
+    )
     {
         $this->url = $url;
         $this->controller = $controller;
@@ -45,6 +51,4 @@ class Route
     {
         return $this->home;
     }
-
-
 }
