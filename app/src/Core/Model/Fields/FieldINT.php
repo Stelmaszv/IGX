@@ -11,18 +11,13 @@ class FieldINT implements Field
     private string $name;
     private ?int $length;
     private bool $isNull;
-    private ?string $nevName = null;
+    private ?string $actualName = null;
 
     public function __construct(
-        AbstractModel $abstractModel,
         string $name,
         ?int $length = null,
         bool $isNull = false
     ){
-
-        if(!$abstractModel->migrationBuilder->checkIfColumnExist($name)){
-            $this->nevName = $name;
-        }
 
         if ($length > 255) {
             throw new ModelException("Int length is grater ten 255 ! ");
@@ -33,9 +28,15 @@ class FieldINT implements Field
         $this->isNull = $isNull;
     }
 
-    public function getNevName(): ?string
+    public function setActualName(string $name): void
     {
-        return $this->nevName;
+        $this->actualName = $name;
+    }
+
+
+    public function getActualName(): ?string
+    {
+        return $this->actualName;
     }
 
     public function isNull() : bool

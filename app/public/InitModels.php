@@ -4,14 +4,14 @@ require('../vendor/autoload.php');
 use App\Core\Model\AbstractModel;
 $files = glob('../src/Main/Model/*');
 
-function loopExceute(array $loop): void
+function loopExecute(array $loop): void
 {
     foreach ($loop as $file){
-        Exceute($file);
+        Execute($file);
     }
 }
 
-function Exceute(string $file) : void
+function Execute(string $file) : void
 {
     if(!is_dir($file)){
         $urls = explode('/',$file);
@@ -34,9 +34,9 @@ function Exceute(string $file) : void
         }
     }else{
         $files = glob($file.'/*');
-        loopExceute($files);
+        loopExecute($files);
     }
 }
 
-loopExceute($files);
+loopExecute($files);
 ?>

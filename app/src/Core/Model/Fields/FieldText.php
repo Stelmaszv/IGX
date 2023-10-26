@@ -11,20 +11,13 @@ class FieldText implements Field
     private string $name;
     private ?int $length;
     private bool $isNull;
-    private ?string $nevName = null;
+    private ?string $actualName = null;
 
     public function __construct(
-        AbstractModel $abstractModel,
         string $name,
         ?int $length = null,
         bool $isNull = false
     ){
-        $abstractModel->migrationBuilder->setName(get_class($abstractModel));
-
-        if(!$abstractModel->migrationBuilder->checkIfColumnExist($name)){
-            $this->nevName = $name;
-        }
-
         if ($length > 256) {
             throw new ModelException("Varchar length is grater ten 256 ! ");
         }
@@ -34,9 +27,14 @@ class FieldText implements Field
         $this->isNull = $isNull;
     }
 
-    public function getNevName(): ?string
+    public function setActualName(string $name): void
     {
-        return $this->nevName;
+        $this->actualName = $name;
+    }
+
+    public function getActualName(): ?string
+    {
+        return $this->actualName;
     }
 
     public function isNull() : bool
