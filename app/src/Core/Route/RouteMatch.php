@@ -45,6 +45,7 @@ class RouteMatch
                 )
             );
             $controller->main();
+            $Params = $this->routeParams->getParams($urls, $this->serverUrl);
         }
 
         if ($home && $this->activeController === null) {

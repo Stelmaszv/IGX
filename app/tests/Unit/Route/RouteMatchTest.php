@@ -26,7 +26,7 @@ class RouteMatchTest extends TestCase
         $routesVar = $routes->getValue($routeMatch);
 
         $this->assertCount(1, $routesVar);
-        $this->assertEquals('example_route', $routeMatch->getRoutes()[0]->getName());
+        $this->assertEquals('example_route', $routesVar[0]->getName());
     }
 
     /** @test */
