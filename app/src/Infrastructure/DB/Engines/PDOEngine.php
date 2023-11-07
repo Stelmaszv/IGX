@@ -57,5 +57,7 @@ class PDOEngine implements DBInterface
         } catch (PDOException $exception) {
             throw new DBException($exception->getMessage());
         }
+
+        return '';
     }
 }
