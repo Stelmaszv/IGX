@@ -13,16 +13,16 @@ class Connect
 
     private function __construct()
     {
-        $this->engine = $this->setEngine(DBSettings::ENGINE);
+        $this->engine = $this->setEngine();
     }
 
-    private function setEngine(string $engine): ?DBInterface
+    private function setEngine(): ?DBInterface
     {
-        if (!in_array($engine, $this->engines)) {
+        if (!in_array(DBSettings::ENGINE, $this->engines)) {
             throw new DBException('Invalid Engine!');
         }
 
-        switch($engine) {
+        switch(DBSettings::ENGINE) {
             case 'PDO':
                 return new PDOEngine();
             case 'MYSQLI':
