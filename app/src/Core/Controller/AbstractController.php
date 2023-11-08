@@ -11,13 +11,13 @@ abstract class AbstractController
 
     abstract public function main() : void;
 
-    protected function setTemplate(string $file ,array $attributes = []) : void
+    public function setTemplate(string $file ,array $attributes = []) : void
     {
         $this->vuexTemplate = new VuexTemplate($file);
         $this->vuexTemplate->setVariables($attributes);
     }
 
-    public function getTemplate() : string
+    public function getTemplate() : ?string
     {
         return $this->vuexTemplate?->render();
     }

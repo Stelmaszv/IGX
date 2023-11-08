@@ -9,14 +9,12 @@ use Exception;
 
 class MysqliEngine implements DBInterface
 {
-    private $com;
-    private $sql;
+    private \MySQLi $com;
 
-    public function __construct(bool $sql = false)
+    public function __construct()
     {
         try {
             $this->com = new \MySQLi(DBSettings::HOST, DBSettings::USERNAME, DBSettings::PASSWORD, DBSettings::DBNAME);
-            $this->sql = $sql;
         } catch (\mysqli_sql_exception $exception) {
             throw new DBException($exception->getMessage());
         }

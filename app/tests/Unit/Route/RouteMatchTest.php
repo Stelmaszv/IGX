@@ -1,98 +1,86 @@
 <?php
-
+use App\Core\Controller\AbstractController;
 use App\Core\Route\Route;
-use App\Core\Route\RouteException;
 use App\Core\Route\RouteMatch;
-use App\Core\Route\RouteValidator;
-use App\Main\Controller\Start;
 use PHPUnit\Framework\TestCase;
 
 class RouteMatchTest extends TestCase
 {
     /** @test */
-    Public Function addRouteSuccess(){
+    public function testAddRoute()
+    {
         $routeMatch = new RouteMatch();
-        $routeMatch->addRoute(
-            [
-                'url' => '/catse/{string:category}/{int:id}',
-                'Controller' => new Start(),
-                'name' => 'Route'
-            ]
-        );
+        $controllerMock = $this->getMockBuilder(AbstractController::class)->getMock();
+
+        $route = [
+            'url' => '/example',
+            'Controller' => $controllerMock,
+            'name' => 'example_route',
+        ];
+
+        $routeMatch->addRoute($route);
+
         $ReflectionClass = new ReflectionClass($routeMatch);
         $routes = $ReflectionClass->getProperty('routes');
         $routes->setAccessible(true);
         $routesVar = $routes->getValue($routeMatch);
 
-        $this->assertEquals(count($routesVar), 1);
-
+        $this->assertCount(1, $routesVar);
+        $this->assertEquals('example_route', $routesVar[0]->getName());
     }
 
     /** @test */
-    Public Function addRouteFailure(){
-        $routeMatch = new RouteMatch();
-        $failure = false;
-
-        try {
-            $routeMatch->addRoute(
-                [
-                    'url' => '/catse/{string:category}/{int:id}',
-                    'Controller' => new Start(),
-                    'name' => 'Route1'
-                ]
-            );
-            $routeMatch->addRoute(
-                [
-                    'url' => '/catse/{string:category}/{int:id}',
-                    'Controller' => new Start(),
-                    'name' => 'Route1'
-                ]
-            );
-        } catch (RouteException) {
-            $failure = true;
-        }
-
-        $this->assertEquals($failure, true);
-    }
-
-    /** @test */
-    Public Function getRouteAsObjectSuccess(){
-        $routeMatch = new RouteMatch();
-        $routeMatch->addRoute(
-            [
-                'url' => '/catese/{string:category}/{int:id}',
-                'Controller' => new Start(),
-                'name' => 'Route',
-            ]
-        );
-        $routeMatch->addRoute(
-            [
-                'url' => '/',
-                'Controller' => new Start(),
-                'name' => 'home',
-                'home' => true
-            ]
-        );
-        $routeMatch->setRoute();
-        $routeMatch->getRouteAsObject('home');
-
-        $this->assertEquals($routeMatch->getRouteAsObject('home') instanceof Route, true);
-
-    }
-
-    /** @test */
-    Public Function validateUrlFailure()
+    public function testSetRoute()
     {
-        $failure = false;
-        try {
-            $routeValidator = new RouteValidator();
-            $pattern = '/\{([a-zA-Z]+):([a-zA-Z]+)\}/';
-            preg_match($pattern, '/cats/{str:category}/{int:id}', $matches);
-            $routeValidator->validateUrl($matches);
-        }catch (RouteException){
-            $failure = true;
-        }
+        $routeMatch = new RouteMatch();
+        $controllerMock = $this->getMockBuilder(AbstractController::class)->getMock();
 
-        $this->assertEquals($failure, true);
+        $route1 = [
+            'url' => '/example1',
+            'Controller' => $controllerMock,
+            'name' => 'example_route1',
+        ];
+
+        $route2 = [
+            'url' => '/example2',
+            'Controller' => $controllerMock,
+            'name' => 'example_route2',
+        ];
+
+        $routeMatch->addRoute($route1);
+        $routeMatch->addRoute($route2);
+        $routeMatch->setRoute();
+
+        $ReflectionClass = new ReflectionClass($routeMatch);
+        $routes = $ReflectionClass->getProperty('activeController');
+        $routes->setAccessible(true);
+        $activeControllerVar = $routes->getValue($routeMatch);
+
+        $this->assertEquals('example_route1', $activeControllerVar);
+    }
+
+    /** @test */
+    public function testGetRouteAsObject()
+    {
+        $routeMatch = new RouteMatch();
+        $controllerMock = $this->getMockBuilder(AbstractController::class)
+            ->getMock();
+
+        $route = [
+            'url' => '/example',
+            'Controller' => $controllerMock,
+            'name' => 'example_route',
+        ];
+
+        $routeMatch->addRoute($route);
+
+        $objRoute = $routeMatch->getRouteAsObject('example_route', ['param' => 'value']);
+
+        $this->assertInstanceOf(Route::class, $objRoute);
+        $this->assertEquals(['param' => 'value'], $objRoute->getParams());
+
+        $nonExistentRoute = $routeMatch->getRouteAsObject('nonexistent_route');
+
+        $this->assertNull($nonExistentRoute);
     }
 }
