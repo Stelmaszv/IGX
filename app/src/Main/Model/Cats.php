@@ -24,7 +24,7 @@ class Cats extends AbstractModel
 
         $this->addField(new FieldTEXT(
             'description',
-            188,
+            100,
             true
         ));
     }

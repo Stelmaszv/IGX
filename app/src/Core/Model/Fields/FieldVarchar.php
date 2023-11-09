@@ -3,10 +3,12 @@
 namespace App\Core\Model\Fields;
 
 use App\Core\Model\Field;
+use App\Core\Model\FieldValidate;
 use App\Core\Model\ModelException;
 
 class FieldVarchar implements Field
 {
+    use FieldValidate;
     private string $name;
     private ?string $actualName = null;
     private int $length;

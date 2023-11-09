@@ -35,6 +35,7 @@ class RouteMatch
         }
 
         if ($this->isMatched($urls, $this->serverUrl) && $this->activeController === null) {
+
             $this->activeController = $name;
             $controller->setControllerRoute(
                 new Route(
@@ -45,10 +46,11 @@ class RouteMatch
                 )
             );
             $controller->main();
-            $Params = $this->routeParams->getParams($urls, $this->serverUrl);
+
         }
 
         if ($home && $this->activeController === null) {
+
             $this->activeController = $name;
             $controller->setControllerRoute(
                 new Route(

@@ -4,9 +4,11 @@ namespace App\Core\Model\Fields;
 
 use App\Core\Model\Field;
 use App\Core\Model\ModelException;
+use App\Core\Model\FieldValidate;
 
 class FieldText implements Field
 {
+    use FieldValidate;
     private string $name;
     private ?int $length;
     private bool $isNull;
