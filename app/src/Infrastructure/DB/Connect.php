@@ -11,7 +11,7 @@ class Connect
     private ?DBInterface $engine;
     private array $engines = ['PDO', 'MYSQLI'];
 
-    public function __construct()
+    private function __construct()
     {
         $this->engine = $this->setEngine();
     }
