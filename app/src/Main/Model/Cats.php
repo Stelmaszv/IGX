@@ -6,11 +6,13 @@ use App\Core\Model\AbstractModel;
 use App\Core\Model\Fields\FieldINT;
 use App\Core\Model\Fields\FieldText;
 use App\Core\Model\Fields\FieldVarchar;
+use App\Main\Entity\CatsEntity;
 
 class Cats extends AbstractModel
 {
     protected function initFields(): void
     {
+        $this->setEntity(CatsEntity::class);
         $this->addField(new FieldVarchar(
             'name',
             256,

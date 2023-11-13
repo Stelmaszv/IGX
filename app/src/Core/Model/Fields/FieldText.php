@@ -12,6 +12,7 @@ class FieldText implements Field
     private string $name;
     private ?int $length;
     private bool $isNull;
+    private ?string $value;
     private ?string $actualName = null;
 
     public function __construct(
@@ -26,6 +27,17 @@ class FieldText implements Field
         $this->name = $name;
         $this->length = $length;
         $this->isNull = $isNull;
+    }
+
+    public function getValue(): ?string
+    {
+        return $this->value;
+    }
+
+
+    public function setValue(string $value): void
+    {
+        $this->value = $value;
     }
 
     public function setActualName(string $name): void

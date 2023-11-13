@@ -12,6 +12,7 @@ class FieldINT implements Field
     private string $name;
     private ?int $length;
     private bool $isNull;
+    private ?int $value;
     private ?string $actualName = null;
 
     public function __construct(
@@ -26,6 +27,17 @@ class FieldINT implements Field
         $this->name = $name;
         $this->length = $length;
         $this->isNull = $isNull;
+    }
+
+    public function getValue(): ?int
+    {
+        return $this->value;
+    }
+
+
+    public function setValue(int $value) : void
+    {
+        $this->value = $value;
     }
 
     public function setActualName(string $name): void

@@ -3,6 +3,7 @@
 namespace App\Core\Model;
 use App\Infrastructure\DB\Connect;
 use App\Infrastructure\DB\DBInterface;
+use ReflectionClass;
 
 abstract class AbstractModel
 {
@@ -10,8 +11,9 @@ abstract class AbstractModel
     private DBInterface $engine;
     public MigrationBuilder $migrationBuilder;
     private bool $fieldAdded = false;
+    private ModelEntity $entity;
 
-    abstract protected function initFields(): void;
+    abstract protected function initFields() : void;
 
     public function __construct()
     {
@@ -23,12 +25,17 @@ abstract class AbstractModel
         }
     }
 
-    protected function addField(Field $field): void
+    protected function addField(Field $field) : void
     {
         $this->fields[] = $field;
     }
 
-    public function initModel(): void
+    protected function setEntity(ModelEntity $entity) : void
+    {
+        $this->entity = $entity;
+    }
+
+    public function initModel() : void
     {
         $this->migrationBuilder->setName(get_class($this));
         $this->migrationBuilder->setFields($this->fields);
@@ -50,19 +57,23 @@ abstract class AbstractModel
     {
         $modelName = explode('\\',get_class($this));
         $sql = 'INSERT INTO `'.$this->engine->escapeString(end($modelName)).'` (';
-        foreach ($this->fields as $key => $field){
-            if($key !== 0){
+        $count = 0;
+        foreach ($this->fields as $field){
+            if($count !== 0 && count($fieldsOrder)>0 ){
                 $sql.=',';
             }
             $sql.=$this->engine->escapeString($field->getName());
+            $count++;
         }
         $sql.=') VALUES (';
 
-        foreach ($fieldsOrder as $key => $field){
-            if($key !== 0){
+        $count = 0;
+        foreach ($fieldsOrder as $field){
+            if( $count !== 0 && count($fieldsOrder)>0 ){
                 $sql.=',';
             }
             $sql.='"'.$this->engine->escapeString($field).'"';
+            $count++;
         }
 
         $sql.=');';
@@ -70,28 +81,41 @@ abstract class AbstractModel
         $this->engine->runQuery($sql);
     }
 
-    public function add(array $data) : void
+    public function get(int $id) : ModelEntity
     {
-        var_dump($this->fields);
         $fields = array_map(function(mixed $field){
             return $field->getName();
         }, $this->fields);
+        array_unshift($fields, 'id');
 
-        foreach ($data as $key => $field){
-            if(!in_array($key,$fields)){
-                $modelName = explode('\\',get_class($this));
-                throw new ModelException("Colum ".$field." not Exist in ".end($modelName)."!");
+        $modelName = explode('\\',get_class($this));
+        $data = $this->engine->getQueryLoop("SELECT ".implode(', ',$fields)." FROM `".$this->engine->escapeString(end($modelName))."` Where id = ".intval($id))[0];
+
+        $reflectionEntity = new ReflectionClass($this->entity);
+
+        foreach ($reflectionEntity->getProperties() as $entity){
+            $method = 'set'.ucfirst($entity->name);
+            $this->entity->$method($data[$entity->name]);
+        }
+
+        return $this->entity;
+    }
+
+    private function getFields(ModelEntity $entity) : array
+    {
+        $reflectionEntity = new ReflectionClass($entity);
+        $this->entity = $entity;
+        $fields = [];
+
+        foreach ($reflectionEntity->getProperties() as $field){
+            if($field->name !== 'id') {
+                $this->findField($this->fields, $field->name)->validate((empty($field)) ? null : $field);
+                $field->setAccessible(true);
+                $fields[$field->getName()] = $field->getValue($entity);
             }
-
-            $this->findField($this->fields,$key)->validate((empty($field)) ? null  : $field);
         }
 
-        $fieldsOrder = [];
-        foreach ($fields as $field){
-            $fieldsOrder[] = $data[$field];
-        }
-
-        $this->insert($fieldsOrder);
+        return $fields;
     }
 
     public function update(array $fields,?int $id) : void
@@ -114,21 +138,13 @@ abstract class AbstractModel
         $this->engine->runQuery($sql);
     }
 
-    public function change(array $data,?int $id) : void
+    public function add(ModelEntity $entity) : void
     {
-        $fields = array_map(function(mixed $field){
-            return $field->getName();
-        }, $this->fields);
+        $this->insert($this->getFields($entity));
+    }
 
-        foreach ($data as $key => $field){
-            if(!in_array($key,$fields)){
-                $modelName = explode('\\',get_class($this));
-                throw new ModelException("Colum ".$key." not Exist in ".end($modelName)."!");
-            }
-
-            $this->findField($this->fields,$key)->validate((empty($field)) ? null  : $field);
-        }
-
-        $this->update($data,$id);
+    public function change(ModelEntity $entity,?int $id) : void
+    {
+        $this->update($this->getFields($entity),$id);
     }
 }

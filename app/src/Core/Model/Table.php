@@ -3,6 +3,7 @@
 namespace App\Core\Model;
 
 use App\Infrastructure\DB\DBInterface;
+use App\Settings\DBSettings;
 
 class Table
 {
@@ -59,7 +60,7 @@ class Table
         return $this->engine->countSQl('information_schema.tables', [
             [
                 'column' => 'table_schema',
-                'value' => 'php_docker'
+                'value' => DBSettings::DBNAME
             ],
             [
                 'column' => 'table_name',
