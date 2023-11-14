@@ -19,8 +19,6 @@ $sql->addWhere(new Between("counter",76,145,'and'));
 
 var_dump($cats->getFiltered($sql));
 
-
-
 $routeMatch->setRoute();
 ?>
 

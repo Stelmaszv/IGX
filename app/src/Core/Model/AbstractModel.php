@@ -26,7 +26,7 @@ abstract class AbstractModel
             $this->initFields();
         }
         if(null === $this->entity){
-            throw new ModelException("entity is udefined");
+            throw new ModelException("entity is undefined");
         }
     }
 
