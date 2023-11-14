@@ -11,7 +11,7 @@ abstract class AbstractModel
     private DBInterface $engine;
     public MigrationBuilder $migrationBuilder;
     private bool $fieldAdded = false;
-    private ModelEntity $entity;
+    private ?ModelEntity $entity;
 
     abstract protected function initFields() : void;
 
@@ -22,6 +22,9 @@ abstract class AbstractModel
         $this->migrationBuilder = new MigrationBuilder($this->engine);
         if(!$this->fieldAdded){
             $this->initFields();
+        }
+        if(null === $this->entity){
+            throw new ModelException("entity is udefined");
         }
     }
 
@@ -81,21 +84,31 @@ abstract class AbstractModel
         $this->engine->runQuery($sql);
     }
 
-    public function get(int $id) : ModelEntity
+    public function get(int $id, array $select = null) : ModelEntity
     {
         $fields = array_map(function(mixed $field){
             return $field->getName();
         }, $this->fields);
         array_unshift($fields, 'id');
 
+        $fields = ($select === null) ? $fields : $select;
+
         $modelName = explode('\\',get_class($this));
-        $data = $this->engine->getQueryLoop("SELECT ".implode(', ',$fields)." FROM `".$this->engine->escapeString(end($modelName))."` Where id = ".intval($id))[0];
+        $data = $this->engine->getQueryLoop("SELECT ".implode(', ',$fields)." FROM `".$this->engine->escapeString(end($modelName))."` Where id = ".intval($id));
+
+        if(0 === count($data)){
+            throw new ModelException("Data Not found");
+        }
+
+        $data = $data[0];
 
         $reflectionEntity = new ReflectionClass($this->entity);
 
         foreach ($reflectionEntity->getProperties() as $entity){
-            $method = 'set'.ucfirst($entity->name);
-            $this->entity->$method($data[$entity->name]);
+            if(in_array($entity->name,$fields)) {
+                $method = 'set' . ucfirst($entity->name);
+                $this->entity->$method($data[$entity->name]);
+            }
         }
 
         return $this->entity;

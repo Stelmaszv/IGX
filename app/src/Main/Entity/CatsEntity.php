@@ -38,22 +38,22 @@ class CatsEntity implements ModelEntity
         $this->name = $name;
     }
 
-    public function getName(): string
+    public function getName(): ?string
     {
         return $this->name;
     }
 
-    public function getId(): int
+    public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getDescription(): string
+    public function getDescription(): ?string
     {
         return $this->description;
     }
 
-    public function getCounter(): int
+    public function getCounter(): ?int
     {
         return $this->counter;
     }

@@ -12,7 +12,7 @@ class Cats extends AbstractModel
 {
     protected function initFields(): void
     {
-        $this->setEntity(CatsEntity::class);
+        $this->setEntity(new CatsEntity);
         $this->addField(new FieldVarchar(
             'name',
             256,

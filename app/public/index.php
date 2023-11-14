@@ -11,12 +11,14 @@ $routeMatch = new RouteMatch();
 require('../route.php');
 
 $cats = new Cats();
+/*
 $cats->add(new CatsEntity(
     'fw',
     75,
     'fe qfeqf'
 ));
-//echo $cats->get(150)->getDescription();
+*/
+var_dump($cats->get(161,['name'])->getName());
 
 $routeMatch->setRoute();
 ?>
