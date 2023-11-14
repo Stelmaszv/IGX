@@ -4,6 +4,7 @@ namespace App\Core\Model;
 use App\Infrastructure\DB\Connect;
 use App\Infrastructure\DB\DBInterface;
 use ReflectionClass;
+use TypeError;
 
 abstract class AbstractModel
 {
@@ -112,6 +113,47 @@ abstract class AbstractModel
         }
 
         return $this->entity;
+    }
+
+    public function getAll(int $onPage = null,array $select = null) : array
+    {
+        $fields = array_map(function(mixed $field){
+            return $field->getName();
+        }, $this->fields);
+        array_unshift($fields, 'id');
+
+        $fields = ($select === null) ? $fields : $select;
+
+        $modelName = explode('\\',get_class($this));
+
+        $sql = "SELECT ".implode(', ',$fields)." FROM `".$this->engine->escapeString(end($modelName))."`";
+
+        try{
+            $page = isset($_GET['page']) ? $_GET['page'] : 1;
+            $paginateStart = ($page - 1) * $onPage;
+
+            if($onPage){
+                $sql.= " LIMIT ".$paginateStart.", ".$onPage."";
+            }
+        }
+        catch (TypeError $e){
+            throw new ModelException("Page must be Int !");
+        }
+
+        $records = [];
+
+        foreach ($this->engine->getQueryLoop($sql) as $recordsData) {
+            foreach ($recordsData as $key => $field){
+                if (in_array($key, $fields)) {
+                    $method = 'set' . ucfirst($key);
+                    $this->entity->$method($field);
+                }
+            }
+            $records[] = $this->entity;
+
+        }
+
+        return $records;
     }
 
     private function getFields(ModelEntity $entity) : array
