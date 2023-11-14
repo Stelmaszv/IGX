@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Core\Model;
+use App\Core\Model\QueryBuilder\Query;
 use App\Infrastructure\DB\Connect;
 use App\Infrastructure\DB\DBInterface;
 use ReflectionClass;
@@ -113,6 +114,57 @@ abstract class AbstractModel
         }
 
         return $this->entity;
+    }
+
+    public function getFiltered(Query $sqlData = null ,int $onPage = null,array $select = null) : array
+    {
+        if( null === $sqlData ){
+           return $this->getAll($onPage,$select);
+        }
+
+        $fields = array_map(function(mixed $field){
+            return $field->getName();
+        }, $this->fields);
+        array_unshift($fields, 'id');
+
+        $fields = ($select === null) ? $fields : $select;
+
+        $modelName = explode('\\',get_class($this));
+
+        $sql = "SELECT ".implode(', ',$fields)." FROM `".$this->engine->escapeString(end($modelName))."`";
+
+        try{
+            $page = isset($_GET['page']) ? $_GET['page'] : 1;
+            $paginateStart = ($page - 1) * $onPage;
+
+            if($onPage){
+                $sql.= " LIMIT ".$paginateStart.", ".$onPage."";
+            }
+        }
+        catch (TypeError $e){
+            throw new ModelException("Page must be Int !");
+        }
+
+        if(null !== $sqlData){
+            $sqlData->setQueryArray();
+            $sql.= $sqlData->getSql();
+        }
+
+        $records = [];
+
+        foreach ($this->engine->getQueryLoop($sql) as $recordsData) {
+            foreach ($recordsData as $key => $field){
+                if (in_array($key, $fields)) {
+                    $method = 'set' . ucfirst($key);
+                    $this->entity->$method($field);
+                }
+            }
+            $records[] = $this->entity;
+
+        }
+
+        return $records;
+
     }
 
     public function getAll(int $onPage = null,array $select = null) : array

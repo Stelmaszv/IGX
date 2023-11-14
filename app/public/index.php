@@ -1,6 +1,10 @@
 <?php
 require('../vendor/autoload.php');
 
+use App\Core\Model\QueryBuilder\AddWhere;
+use App\Core\Model\QueryBuilder\Between;
+use App\Core\Model\QueryBuilder\Query;
+use App\Core\Model\QueryBuilder\Where;
 use App\Core\Route\RouteMatch;
 use App\Infrastructure\DB\Connect;
 use App\Main\Model\Cats;
@@ -11,20 +15,13 @@ require('../route.php');
 
 $cats = new Cats();
 
-/*
-$cats->add(new CatsEntity(
-    'fw',
-    75,
-    'fe qfeqf'
-));
-var_dump($cats->get(161, [
-    'name'
-])->getName());
-*/
+$sql = new Query();
 
-echo '<pre>';
-var_dump($cats->getAll(4));
-echo '</pre>';
+$sql->addWhere(new Between("counter",76,145,'and'));
+
+var_dump($cats->getFiltered($sql));
+
+
 
 $routeMatch->setRoute();
 ?>
