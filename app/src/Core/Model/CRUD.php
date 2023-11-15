@@ -3,7 +3,6 @@
 namespace App\Core\Model;
 
 use App\Core\Model\QueryBuilder\Query;
-use App\Infrastructure\DB\DBInterface;
 use ReflectionClass;
 use TypeError;
 
@@ -103,9 +102,7 @@ trait CRUD
             $sql .= $sqlData->getSql();
         }
 
-        $records = $this->fetchRecordsWithQuery($sql);
-
-        return $records;
+        return $this->fetchRecordsWithQuery($sql);
     }
 
     private function addPaginationToQuery(string &$sql, ?int $onPage): void
@@ -136,43 +133,15 @@ trait CRUD
 
     public function getAll(int $onPage = null,array $select = null) : array
     {
-        $fields = array_map(function(mixed $field){
-            return $field->getName();
-        }, $this->fields);
-        array_unshift($fields, 'id');
+        $fields = $this->prepareFieldsForSelect($select);
 
-        $fields = ($select === null) ? $fields : $select;
+        $tableName = $this->getTableName();
 
-        $modelName = explode('\\',get_class($this));
+        $sql = "SELECT " . implode(', ', $fields) . " FROM `$tableName`";
 
-        $sql = "SELECT ".implode(', ',$fields)." FROM `".$this->engine->escapeString(end($modelName))."`";
+        $this->addPaginationToQuery($sql, $onPage);
 
-        try{
-            $page = isset($_GET['page']) ? $_GET['page'] : 1;
-            $paginateStart = ($page - 1) * $onPage;
-
-            if($onPage){
-                $sql.= " LIMIT ".$paginateStart.", ".$onPage."";
-            }
-        }
-        catch (TypeError $e){
-            throw new ModelException("Page must be Int !");
-        }
-
-        $records = [];
-
-        foreach ($this->engine->getQueryLoop($sql) as $recordsData) {
-            foreach ($recordsData as $key => $field){
-                if (in_array($key, $fields)) {
-                    $method = 'set' . ucfirst($key);
-                    $this->entity->$method($field);
-                }
-            }
-            $records[] = $this->entity;
-
-        }
-
-        return $records;
+        return $this->fetchRecordsWithQuery($sql);
     }
 
     private function getFields(ModelEntity $entity) : array
