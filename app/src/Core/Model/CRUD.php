@@ -62,6 +62,49 @@ trait CRUD
         return $select ?? $fields;
     }
 
+    private function addPaginationToQuery(string &$sql, ?int $onPage): void
+    {
+        try {
+            $page = isset($_GET['page']) ? $_GET['page'] : 1;
+            $paginateStart = ($page - 1) * $onPage;
+
+            if ($onPage) {
+                $sql .= " LIMIT $paginateStart, $onPage";
+            }
+        } catch (TypeError $e) {
+            throw new ModelException("Page must be an integer!");
+        }
+    }
+
+    private function fetchRecordsWithQuery(string $sql): array
+    {
+        $records = [];
+
+        foreach ($this->engine->getQueryLoop($sql) as $recordsData) {
+            $this->hydrateEntityProperties($recordsData);
+            $records[] = clone $this->entity; // Clone the entity to avoid overwriting the same instance
+        }
+
+        return $records;
+    }
+
+    private function getFields(ModelEntity $entity) : array
+    {
+        $reflectionEntity = new ReflectionClass($entity);
+        $this->entity = $entity;
+        $fields = [];
+
+        foreach ($reflectionEntity->getProperties() as $field){
+            if($field->name !== 'id') {
+                $this->findField($this->fields, $field->name)->validate((empty($field)) ? null : $field);
+                $field->setAccessible(true);
+                $fields[$field->getName()] = $field->getValue($entity);
+            }
+        }
+
+        return $fields;
+    }
+
     public function get(int $id, array $select = null) : ModelEntity
     {
         $fields = $this->prepareFieldsForSelect($select);
@@ -105,32 +148,6 @@ trait CRUD
         return $this->fetchRecordsWithQuery($sql);
     }
 
-    private function addPaginationToQuery(string &$sql, ?int $onPage): void
-    {
-        try {
-            $page = isset($_GET['page']) ? $_GET['page'] : 1;
-            $paginateStart = ($page - 1) * $onPage;
-
-            if ($onPage) {
-                $sql .= " LIMIT $paginateStart, $onPage";
-            }
-        } catch (TypeError $e) {
-            throw new ModelException("Page must be an integer!");
-        }
-    }
-
-    private function fetchRecordsWithQuery(string $sql): array
-    {
-        $records = [];
-
-        foreach ($this->engine->getQueryLoop($sql) as $recordsData) {
-            $this->hydrateEntityProperties($recordsData);
-            $records[] = clone $this->entity; // Clone the entity to avoid overwriting the same instance
-        }
-
-        return $records;
-    }
-
     public function getAll(int $onPage = null,array $select = null) : array
     {
         $fields = $this->prepareFieldsForSelect($select);
@@ -142,23 +159,6 @@ trait CRUD
         $this->addPaginationToQuery($sql, $onPage);
 
         return $this->fetchRecordsWithQuery($sql);
-    }
-
-    private function getFields(ModelEntity $entity) : array
-    {
-        $reflectionEntity = new ReflectionClass($entity);
-        $this->entity = $entity;
-        $fields = [];
-
-        foreach ($reflectionEntity->getProperties() as $field){
-            if($field->name !== 'id') {
-                $this->findField($this->fields, $field->name)->validate((empty($field)) ? null : $field);
-                $field->setAccessible(true);
-                $fields[$field->getName()] = $field->getValue($entity);
-            }
-        }
-
-        return $fields;
     }
 
     public function update(array $fields,?int $id) : void
