@@ -3,13 +3,16 @@
 namespace App\Core\Model\Fields;
 
 use App\Core\Model\Field;
+use App\Core\Model\FieldValidate;
 use App\Core\Model\ModelException;
 
 class FieldINT implements Field
 {
+    use FieldValidate;
     private string $name;
     private ?int $length;
     private bool $isNull;
+    private ?int $value;
     private ?string $actualName = null;
 
     public function __construct(
@@ -24,6 +27,17 @@ class FieldINT implements Field
         $this->name = $name;
         $this->length = $length;
         $this->isNull = $isNull;
+    }
+
+    public function getValue(): ?int
+    {
+        return $this->value;
+    }
+
+
+    public function setValue(int $value) : void
+    {
+        $this->value = $value;
     }
 
     public function setActualName(string $name): void

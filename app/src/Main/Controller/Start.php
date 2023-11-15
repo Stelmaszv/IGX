@@ -18,7 +18,7 @@ class Start extends AbstractController
             'zero' => true
             ]
         );
-        var_dump($this->getTemplate());
+
         echo $this->getTemplate();
     }
 }
