@@ -13,22 +13,6 @@ $connect = Connect::getInstance();
 $routeMatch = new RouteMatch();
 require('../route.php');
 
-$cats = new Cats();
-
-$sql = new Query();
-
-/*
-$sql->addWhere(new Where("counter",75,'=','and'));
-
-$cats->add(new CatsEntity(
-    "jajny nowy",
-    123,
-    "fwefewf"
-));
-var_dump($cats->get(180));
-*/
 $routeMatch->setRoute();
-
-
 ?>
 

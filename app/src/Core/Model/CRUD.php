@@ -9,124 +9,129 @@ use TypeError;
 
 trait CRUD
 {
+    private function getTableName(): string
+    {
+        $modelName = explode('\\', get_class($this));
+        return $this->engine->escapeString(end($modelName));
+    }
+
     private function findField(array $data, string $value): ?Field
     {
-        foreach ($data as $sqlField){
-            if($sqlField->getName() === $value){
-                return $sqlField;
-            }
-        }
+        $filteredFields = array_filter($data, fn($sqlField) => $sqlField->getName() === $value);
 
-        return null;
+        return $filteredFields ? reset($filteredFields) : null;
     }
 
-    private function insert(array $fieldsOrder) : void
+    private function buildInsertQuery(array $fieldsOrder): string
     {
-        $modelName = explode('\\',get_class($this));
-        $sql = 'INSERT INTO `'.$this->engine->escapeString(end($modelName)).'` (';
-        $count = 0;
-        foreach ($this->fields as $field){
-            if($count !== 0 && count($fieldsOrder)>0 ){
-                $sql.=',';
-            }
-            $sql.=$this->engine->escapeString($field->getName());
-            $count++;
-        }
-        $sql.=') VALUES (';
+        $tableName = $this->getTableName();
+        $columns = array_map(fn($field) => $this->engine->escapeString($field->getName()), $this->fields);
+        $values = array_map(fn($field) => '"' . $this->engine->escapeString($field) . '"', $fieldsOrder);
 
-        $count = 0;
-        foreach ($fieldsOrder as $field){
-            if( $count !== 0 && count($fieldsOrder)>0 ){
-                $sql.=',';
-            }
-            $sql.='"'.$this->engine->escapeString($field).'"';
-            $count++;
-        }
-
-        $sql.=');';
-
-        $this->engine->runQuery($sql);
+        return sprintf(
+            'INSERT INTO `%s` (%s) VALUES (%s);',
+            $tableName,
+            implode(', ', $columns),
+            implode(', ', $values)
+        );
     }
 
-    public function get(int $id, array $select = null) : ModelEntity
+    private function validateDataFound(array $data): void
     {
-        $fields = array_map(function(mixed $field){
-            return $field->getName();
-        }, $this->fields);
-        array_unshift($fields, 'id');
-
-        $fields = ($select === null) ? $fields : $select;
-
-        $modelName = explode('\\',get_class($this));
-        $data = $this->engine->getQueryLoop("SELECT ".implode(', ',$fields)." FROM `".$this->engine->escapeString(end($modelName))."` Where id = ".intval($id));
-
-        if(0 === count($data)){
-            throw new ModelException("Data Not found");
+        if (count($data) === 0) {
+            throw new ModelException("Data not found");
         }
+    }
 
-        $data = $data[0];
-
+    private function hydrateEntityProperties(array $data): void
+    {
         $reflectionEntity = new ReflectionClass($this->entity);
 
-        foreach ($reflectionEntity->getProperties() as $entity){
-            if(in_array($entity->name,$fields)) {
+        foreach ($reflectionEntity->getProperties() as $entity) {
+            if (in_array($entity->name, $data)) {
                 $method = 'set' . ucfirst($entity->name);
                 $this->entity->$method($data[$entity->name]);
             }
         }
+    }
+
+    private function prepareFieldsForSelect(?array $select): array
+    {
+        $fields = array_map(fn($field) => $field->getName(), $this->fields);
+        array_unshift($fields, 'id');
+
+        return $select ?? $fields;
+    }
+
+    public function get(int $id, array $select = null) : ModelEntity
+    {
+        $fields = $this->prepareFieldsForSelect($select);
+        $tableName = $this->getTableName();
+
+        $query = sprintf(
+            "SELECT %s FROM `%s` WHERE id = %d",
+            implode(', ', $fields),
+            $tableName,
+            intval($id)
+        );
+
+        $data = $this->engine->getQueryLoop($query);
+
+        $this->validateDataFound($data);
+
+        $data = $data[0];
+        $this->hydrateEntityProperties($data);
 
         return $this->entity;
     }
 
-    public function getFiltered(Query $sqlData = null ,int $onPage = null,array $select = null) : array
+    public function getFiltered(Query $sqlData = null, int $onPage = null, array $select = null): array
     {
-        if( null === $sqlData ){
-            return $this->getAll($onPage,$select);
+        if ($sqlData === null) {
+            return $this->getAll($onPage, $select);
         }
 
-        $fields = array_map(function(mixed $field){
-            return $field->getName();
-        }, $this->fields);
-        array_unshift($fields, 'id');
+        $fields = $this->prepareFieldsForSelect($select);
+        $tableName = $this->getTableName();
 
-        $fields = ($select === null) ? $fields : $select;
+        $sql = "SELECT " . implode(', ', $fields) . " FROM `$tableName`";
 
-        $modelName = explode('\\',get_class($this));
+        $this->addPaginationToQuery($sql, $onPage);
 
-        $sql = "SELECT ".implode(', ',$fields)." FROM `".$this->engine->escapeString(end($modelName))."`";
+        if ($sqlData !== null) {
+            $sqlData->setQueryArray();
+            $sql .= $sqlData->getSql();
+        }
 
-        try{
+        $records = $this->fetchRecordsWithQuery($sql);
+
+        return $records;
+    }
+
+    private function addPaginationToQuery(string &$sql, ?int $onPage): void
+    {
+        try {
             $page = isset($_GET['page']) ? $_GET['page'] : 1;
             $paginateStart = ($page - 1) * $onPage;
 
-            if($onPage){
-                $sql.= " LIMIT ".$paginateStart.", ".$onPage."";
+            if ($onPage) {
+                $sql .= " LIMIT $paginateStart, $onPage";
             }
+        } catch (TypeError $e) {
+            throw new ModelException("Page must be an integer!");
         }
-        catch (TypeError $e){
-            throw new ModelException("Page must be Int !");
-        }
+    }
 
-        if(null !== $sqlData){
-            $sqlData->setQueryArray();
-            $sql.= $sqlData->getSql();
-        }
-
+    private function fetchRecordsWithQuery(string $sql): array
+    {
         $records = [];
 
         foreach ($this->engine->getQueryLoop($sql) as $recordsData) {
-            foreach ($recordsData as $key => $field){
-                if (in_array($key, $fields)) {
-                    $method = 'set' . ucfirst($key);
-                    $this->entity->$method($field);
-                }
-            }
-            $records[] = $this->entity;
-
+            $this->hydrateEntityProperties($recordsData);
+            $records[] = clone $this->entity; // Clone the entity to avoid overwriting the same instance
         }
 
         return $records;
-
     }
 
     public function getAll(int $onPage = null,array $select = null) : array
@@ -207,9 +212,11 @@ trait CRUD
         $this->engine->runQuery($sql);
     }
 
-    public function add(ModelEntity $entity) : void
+    public function add(ModelEntity $entity): void
     {
-        $this->insert($this->getFields($entity));
+        $fields = $this->getFields($entity);
+        $insertQuery = $this->buildInsertQuery($fields);
+        $this->engine->runQuery($insertQuery);
     }
 
     public function change(ModelEntity $entity,?int $id) : void
