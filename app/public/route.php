@@ -16,6 +16,6 @@ $user = new User();
 $user->add(new UserEntity(
     "user",
     password_hash('password', PASSWORD_DEFAULT),
-    "email",
+    "email@citki.com",
     "role",
 ));

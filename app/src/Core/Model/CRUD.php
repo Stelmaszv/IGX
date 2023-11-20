@@ -96,7 +96,7 @@ trait CRUD
 
         foreach ($reflectionEntity->getProperties() as $field){
             if($field->name !== 'id') {
-                //$this->findField($this->fields, $field->name)->validate((empty($field)) ? null : $field);
+                $this->findField($this->fields, $field->name)->validate((empty($field->getValue($entity))) ? null : $field->getValue($entity));
                 $field->setAccessible(true);
                 $fields[$field->getName()] = $field->getValue($entity);
             }
