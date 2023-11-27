@@ -15,5 +15,19 @@ trait FieldValidate
                 throw new ModelValidateException('This value '.strlen($value).' is to length max length '.$this->getLength().'!');
             }
         }
+
+        if($this->getisUniqe()){
+            $count = $this->engine->countSQl('User', [
+                [
+                    'column' => $this->getName(),
+                    'value' => $value
+                ]
+            ]);
+            
+            if($count > 0){
+                throw new ModelValidateException('This field is isUniqe !');
+            }
+
+        }
     }
 }

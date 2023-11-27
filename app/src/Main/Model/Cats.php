@@ -15,19 +15,16 @@ class Cats extends AbstractModel
         $this->setEntity(new CatsEntity);
         $this->addField(new FieldVarchar(
             'name',
-            256,
-            true
+            256
         ));
         $this->addField(new FieldINT(
             'counter',
-            255,
-            true
+            255
         ));
 
         $this->addField(new FieldTEXT(
             'description',
-            100,
-            true
+            100
         ));
     }
 

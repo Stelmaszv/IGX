@@ -21,7 +21,8 @@ class FieldText implements Field
     public function __construct(
         string $name,
         ?int $length = null,
-        bool $isNull = false
+        bool $isNull = true,
+        bool $isUniqe = false
     ) {
         if ($length !== null && $length > 256) {
             throw new ModelException("Text length cannot exceed 256 characters.");
@@ -30,7 +31,7 @@ class FieldText implements Field
         $this->name = $name;
         $this->length = $length;
         $this->isNull = $isNull;
-        $this->isUniqe = false;
+        $this->isUniqe = $isUniqe;
     }
 
     public function setEngine(DBInterface $engine){
@@ -80,5 +81,17 @@ class FieldText implements Field
         } else {
             return "TEXT";
         }
+    }
+
+    public function getIsUniqe()
+    {
+        return $this->isUniqe;
+    }
+
+    public function setIsUniqe($isUniqe)
+    {
+        $this->isUniqe = $isUniqe;
+
+        return $this;
     }
 }

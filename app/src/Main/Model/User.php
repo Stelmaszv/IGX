@@ -15,14 +15,12 @@ class User extends AbstractModel
 
         $this->addField(new FieldVarchar(
             'name',
-            150,
-            true
+            150
         ));
 
         $this->addField(new FieldVarchar(
             'password',
-            150,
-            true
+            150
         ));
 
         $this->addField(new FieldEmail(
@@ -34,8 +32,7 @@ class User extends AbstractModel
 
         $this->addField(new FieldVarchar(
             'role',
-            100,
-            true
+            100
         ));
     }
 

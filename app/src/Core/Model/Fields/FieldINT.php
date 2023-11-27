@@ -21,7 +21,8 @@ class FieldINT implements Field
     public function __construct(
         string $name,
         ?int $length = null,
-        bool $isNull = false
+        bool $isNull = true,
+        bool $isUniqe = false
     ) {
         if ($length !== null && $length > 255) {
             throw new ModelException("Int length cannot exceed 255.");
@@ -30,7 +31,7 @@ class FieldINT implements Field
         $this->name = $name;
         $this->length = $length;
         $this->isNull = $isNull;
-        $this->isUniqe = false;
+        $this->isUniqe = $isUniqe;
     }
 
     public function setEngine(DBInterface $engine){
@@ -41,7 +42,6 @@ class FieldINT implements Field
     {
         return $this->value;
     }
-
 
     public function setValue(int $value) : void
     {
@@ -80,5 +80,10 @@ class FieldINT implements Field
         } else {
             return "INT";
         }
+    }
+
+    public function getIsUniqe()
+    {
+        return $this->isUniqe;
     }
 }

@@ -15,10 +15,10 @@ class FieldVarchar implements Field
     private int $length;
     private bool $isNull;
     private ?string $value;
-    private DBInterface $engine; 
+    protected DBInterface $engine; 
     private bool $isUniqe; 
 
-    public function __construct(string $name, int $length, bool $isNull = false)
+    public function __construct(string $name, int $length, bool $isNull = true, bool $isUniqe = false)
     {
         if ($length > 256) {
             throw new ModelException("Varchar length cannot exceed 256 characters.");
@@ -27,7 +27,7 @@ class FieldVarchar implements Field
         $this->name = $name;
         $this->length = $length;
         $this->isNull = $isNull;
-        $this->isUniqe = false;
+        $this->isUniqe = $isUniqe;
     }
 
     public function setEngine(DBInterface $engine){
@@ -72,5 +72,17 @@ class FieldVarchar implements Field
     public function getFieldName(): string
     {
         return "VARCHAR({$this->getLength()})";
+    }
+ 
+    public function getIsUniqe()
+    {
+        return $this->isUniqe;
+    }
+
+    public function setIsUniqe($isUniqe)
+    {
+        $this->isUniqe = $isUniqe;
+
+        return $this;
     }
 }
