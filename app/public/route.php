@@ -13,6 +13,7 @@ $routeMatch->setRoute();
 
 $connect = Connect::getInstance();
 $user = new User();
+
 $user->add(new UserEntity(
     "user",
     password_hash('password', PASSWORD_DEFAULT),

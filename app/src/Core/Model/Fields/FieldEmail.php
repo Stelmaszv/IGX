@@ -2,12 +2,42 @@
 
 namespace App\Core\Model\Fields;
 
+use App\Infrastructure\DB\DBInterface;
 use App\Core\Model\ModelValidateException;
 
 class FieldEmail extends FieldVarchar
 {
+    private bool $isUniqe; 
+    private DBInterface $engine; 
+
+    public function __construct(string $name, int $length, bool $isNull = false, bool $isUniqe = false)
+    {
+        parent::__construct($name, $length, $isNull);
+        $this->isUniqe = $isUniqe;
+    }
+
+    public function setEngine(DBInterface $engine){
+        $this->engine = $engine;
+    }
+
     public function validate(mixed $value): void
     {
+        if($this->isUniqe){
+            $count = $this->engine->countSQl('User', [
+                [
+                    'column' => $this->getName(),
+                    'value' => $value
+                ]
+            ]);
+            
+            if($count > 0){
+                throw new ModelValidateException('This field is isUniqe !');
+            }
+
+        }
+
+
+
         if(!$this->isNull() && $value === null){
             throw new ModelValidateException('This field cannot not be null !');
         }

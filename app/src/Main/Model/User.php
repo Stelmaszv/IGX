@@ -28,7 +28,8 @@ class User extends AbstractModel
         $this->addField(new FieldEmail(
             'email',
             150,
-            true
+            true,
+            true,
         ));
 
         $this->addField(new FieldVarchar(

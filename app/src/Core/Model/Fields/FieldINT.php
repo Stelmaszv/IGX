@@ -5,6 +5,7 @@ namespace App\Core\Model\Fields;
 use App\Core\Model\Field;
 use App\Core\Model\FieldValidate;
 use App\Core\Model\ModelException;
+use App\Infrastructure\DB\DBInterface;
 
 class FieldINT implements Field
 {
@@ -14,6 +15,8 @@ class FieldINT implements Field
     private bool $isNull;
     private ?int $value;
     private ?string $actualName = null;
+    private DBInterface $engine; 
+    private bool $isUniqe; 
 
     public function __construct(
         string $name,
@@ -27,6 +30,11 @@ class FieldINT implements Field
         $this->name = $name;
         $this->length = $length;
         $this->isNull = $isNull;
+        $this->isUniqe = false;
+    }
+
+    public function setEngine(DBInterface $engine){
+        $this->engine = $engine;
     }
 
     public function getValue(): ?int
