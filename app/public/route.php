@@ -1,9 +1,9 @@
 <?php
+session_start();
 require('../vendor/autoload.php');
 
-use App\Main\Model\User;
 use App\Core\Route\RouteMatch;
-use App\Main\Entity\UserEntity;
+use App\Core\Auth\Authenticate;
 use App\Infrastructure\DB\Connect;
 
 $routeMatch = new RouteMatch();
@@ -12,11 +12,29 @@ require('../route.php');
 $routeMatch->setRoute();
 
 $connect = Connect::getInstance();
-$user = new User();
+$engin = $connect->getEngine();
 
-$user->add(new UserEntity(
-    "user",
-    password_hash('password', PASSWORD_DEFAULT),
-    "email@citki.com",
-    "role",
-));
+
+$authenticate = new Authenticate($engin);
+
+if(isset($_GET['logout'])){
+    $authenticate->logout();
+}
+
+if(isset($_GET['login'])){
+    $authenticate->login([
+        "email" => "email@citki.com",
+        "password" => "password"
+    ]);
+}
+
+if($authenticate->inLogin()){
+    var_dump($authenticate->getUser()->getEmail());
+    echo '<br>';
+    echo '<a href="?logout">logout</a>';
+    echo '<br>';
+}else{
+    echo '<br>';
+    echo '<a href="?login">loguj</a>';
+    echo '<br>';
+}

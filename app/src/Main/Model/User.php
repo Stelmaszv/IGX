@@ -34,6 +34,11 @@ class User extends AbstractModel
             'role',
             100
         ));
+
+        $this->addField(new FieldVarchar(
+            'salt',
+            200
+        ));
     }
 
     public function __toString(): string

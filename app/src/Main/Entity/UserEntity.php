@@ -11,13 +11,29 @@ class UserEntity implements ModelEntity
     private ?string $password;
     private ?string $email;
     private ?string $role;
+    private ?string $salt;
 
-    function __construct(string $name = null, string $password = null, string $email = null, string $role = null){
+    function __construct(
+        string $name = null,
+        string $password = null, 
+        string $email = null, 
+        string $role = null, 
+        string $salt = null
+    ){
         $this->name = $name;
         $this->password = $password;
         $this->email = $email;
         $this->role = $role;
+        $this->salt = $salt;
     }
+
+    public function setId($id)
+    {
+        $this->id = $id;
+
+        return $this;
+    }
+
 
     public function getId() : ?int
     {
@@ -68,6 +84,18 @@ class UserEntity implements ModelEntity
     public function setPassword($password) : object
     {
         $this->password = $password;
+
+        return $this;
+    }
+
+    public function getSalt()
+    {
+        return $this->salt;
+    }
+
+    public function setSalt($salt)
+    {
+        $this->salt = $salt;
 
         return $this;
     }

@@ -9,7 +9,6 @@ class FieldEmail extends FieldVarchar
 {
     public function validate(mixed $value): void
     {
-        var_dump($this->getisUniqe());
         if($this->getisUniqe()){
             $count = $this->engine->countSQl('User', [
                 [

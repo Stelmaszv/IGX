@@ -50,10 +50,8 @@ trait CRUD
         $reflectionEntity = new ReflectionClass($this->entity);
 
         foreach ($reflectionEntity->getProperties() as $entity) {
-            if (in_array($entity->name, $data)) {
-                $method = 'set' . ucfirst($entity->name);
-                $this->entity->$method($data[$entity->name]);
-            }
+            $method = 'set' . ucfirst($entity->name);
+            $this->entity->$method($data[$entity->name]);
         }
     }
 
