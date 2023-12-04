@@ -22,14 +22,16 @@ if(isset($_GET['logout'])){
 }
 
 if(isset($_GET['login'])){
-    $authenticate->login([
+    $authenticate->register([
+        "name" => "user",
+        "password" => "password",
         "email" => "email@citki.com",
-        "password" => "password"
+        "roles" => ['acces']
     ]);
 }
 
 if($authenticate->inLogin()){
-    var_dump($authenticate->getUser()->getEmail());
+    var_dump($authenticate->getUser());
     echo '<br>';
     echo '<a href="?logout">logout</a>';
     echo '<br>';

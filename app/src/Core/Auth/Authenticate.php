@@ -21,11 +21,12 @@ class Authenticate
         $entity = AuthenticateSettings::ENTITY;
         $solt = bin2hex(random_bytes(AuthenticateSettings::SALD));
         $tableObj = new $table();
+
         $tableObj->add(new $entity(
             $data['name'],
             password_hash($data['password'].$solt, PASSWORD_BCRYPT),
             $data['email'],
-            $data['role'],
+            json_encode($data['roles']),
             $solt
         ));
     }
@@ -62,12 +63,9 @@ class Authenticate
                 $_SESSION['id'] = $dataQuery['id'];
                 return true;
             }
+        }else{
+            throw new AuthenticateException("Invalid login data !"); 
         }
-
-        if($this->inLogin()){
-            throw new AuthenticateException("Invalid login data !");
-        }
-
     }
 
 }

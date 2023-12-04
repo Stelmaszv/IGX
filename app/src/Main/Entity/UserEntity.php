@@ -3,6 +3,7 @@
 namespace App\Main\Entity;
 
 use App\Core\Model\ModelEntity;
+use App\Infrastructure\DB\DBInterface;
 
 class UserEntity implements ModelEntity
 {
@@ -10,20 +11,20 @@ class UserEntity implements ModelEntity
     private ?string $name;
     private ?string $password;
     private ?string $email;
-    private ?string $role;
+    private ?string $roles;
     private ?string $salt;
 
     function __construct(
         string $name = null,
         string $password = null, 
         string $email = null, 
-        string $role = null, 
+        string $roles = null, 
         string $salt = null
     ){
         $this->name = $name;
         $this->password = $password;
         $this->email = $email;
-        $this->role = $role;
+        $this->roles = $roles;
         $this->salt = $salt;
     }
 
@@ -33,7 +34,6 @@ class UserEntity implements ModelEntity
 
         return $this;
     }
-
 
     public function getId() : ?int
     {
@@ -50,9 +50,9 @@ class UserEntity implements ModelEntity
         return $this->email;
     }
 
-    public function getRole() : ?string
+    public function getRoles() : ?string
     {
-        return $this->role;
+        return $this->roles;
     }
 
     public function setName($name) : object
@@ -69,9 +69,9 @@ class UserEntity implements ModelEntity
         return $this;
     }
 
-    public function setRole($role) : object
+    public function setRoles($roles) : object
     {
-        $this->role = $role;
+        $this->roles = $roles;
 
         return $this;
     }

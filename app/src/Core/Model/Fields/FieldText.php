@@ -24,10 +24,6 @@ class FieldText implements Field
         bool $isNull = true,
         bool $isUniqe = false
     ) {
-        if ($length !== null && $length > 256) {
-            throw new ModelException("Text length cannot exceed 256 characters.");
-        }
-
         $this->name = $name;
         $this->length = $length;
         $this->isNull = $isNull;
@@ -42,7 +38,6 @@ class FieldText implements Field
     {
         return $this->value;
     }
-
 
     public function setValue(string $value): void
     {
