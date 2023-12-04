@@ -5,6 +5,7 @@ namespace App\Core\Model\Fields;
 use App\Core\Model\Field;
 use App\Core\Model\FieldValidate;
 use App\Core\Model\ModelException;
+use App\Infrastructure\DB\DBInterface;
 
 class FieldVarchar implements Field
 {
@@ -14,8 +15,10 @@ class FieldVarchar implements Field
     private int $length;
     private bool $isNull;
     private ?string $value;
+    protected DBInterface $engine; 
+    private bool $isUniqe; 
 
-    public function __construct(string $name, int $length, bool $isNull = false)
+    public function __construct(string $name, int $length, bool $isNull = true, bool $isUniqe = false)
     {
         if ($length > 256) {
             throw new ModelException("Varchar length cannot exceed 256 characters.");
@@ -24,6 +27,11 @@ class FieldVarchar implements Field
         $this->name = $name;
         $this->length = $length;
         $this->isNull = $isNull;
+        $this->isUniqe = $isUniqe;
+    }
+
+    public function setEngine(DBInterface $engine){
+        $this->engine = $engine;
     }
 
     public function setActualName(string $name): void
@@ -64,5 +72,17 @@ class FieldVarchar implements Field
     public function getFieldName(): string
     {
         return "VARCHAR({$this->getLength()})";
+    }
+ 
+    public function getIsUniqe()
+    {
+        return $this->isUniqe;
+    }
+
+    public function setIsUniqe($isUniqe)
+    {
+        $this->isUniqe = $isUniqe;
+
+        return $this;
     }
 }

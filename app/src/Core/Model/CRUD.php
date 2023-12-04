@@ -2,12 +2,15 @@
 
 namespace App\Core\Model;
 
-use App\Core\Model\QueryBuilder\Query;
-use ReflectionClass;
 use TypeError;
+use ReflectionClass;
+use App\Core\Model\QueryBuilder\Query;
+use App\Infrastructure\DB\DBInterface;
 
 trait CRUD
 {
+    private DBInterface $engine;
+
     private function getTableName(): string
     {
         $modelName = explode('\\', get_class($this));
@@ -47,10 +50,8 @@ trait CRUD
         $reflectionEntity = new ReflectionClass($this->entity);
 
         foreach ($reflectionEntity->getProperties() as $entity) {
-            if (in_array($entity->name, $data)) {
-                $method = 'set' . ucfirst($entity->name);
-                $this->entity->$method($data[$entity->name]);
-            }
+            $method = 'set' . ucfirst($entity->name);
+            $this->entity->$method($data[$entity->name]);
         }
     }
 
@@ -96,7 +97,9 @@ trait CRUD
 
         foreach ($reflectionEntity->getProperties() as $field){
             if($field->name !== 'id') {
-                $this->findField($this->fields, $field->name)->validate((empty($field)) ? null : $field);
+                $fieldObj = $this->findField($this->fields, $field->name);
+                $fieldObj->setEngine($this->engine);
+                $fieldObj->validate((empty($field->getValue($entity))) ? null : $field->getValue($entity));
                 $field->setAccessible(true);
                 $fields[$field->getName()] = $field->getValue($entity);
             }
