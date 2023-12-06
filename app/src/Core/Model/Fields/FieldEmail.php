@@ -17,7 +17,7 @@ class FieldEmail extends FieldVarchar
                 ]
             ]);
             
-            if($count > 0){
+            if($count > 1){
                 throw new ModelValidateException('This field is isUniqe !');
             }
 

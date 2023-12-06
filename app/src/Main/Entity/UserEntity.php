@@ -2,9 +2,10 @@
 
 namespace App\Main\Entity;
 
-use App\Core\Model\ModelEntity;
-use App\Infrastructure\DB\DBInterface;
+use Exception;
+use App\Settings\RolesList;
 use App\Main\Collections\Role;
+use App\Core\Model\ModelEntity;
 use App\Main\Collections\RolesMapCollection;
 
 class UserEntity implements ModelEntity
@@ -60,6 +61,18 @@ class UserEntity implements ModelEntity
         }
 
         return $rolesMap;
+    }
+
+    public function addRole(string $role){
+        $roles = json_decode($this->roles);
+
+        if(!in_array($role,RolesList::ROLES)){
+            throw new Exception('Invalid Role "'.$role.'" !');
+        }
+
+        $roles[] = $role;
+
+        $this->roles = json_encode($roles);
     }
 
     public function hasRole(string $role) : bool
