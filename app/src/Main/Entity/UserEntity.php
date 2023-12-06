@@ -63,6 +63,11 @@ class UserEntity implements ModelEntity
         return $rolesMap;
     }
 
+    public function getRolesAsJSON() : array
+    {
+        return json_decode($this->roles);
+    }
+
     public function addRole(string $role){
         $roles = json_decode($this->roles);
 

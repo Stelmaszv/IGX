@@ -25,7 +25,7 @@ if(isset($_GET['logout'])){
 }
 
 $rolesMapCollection = new RolesMapCollection;
-$rolesMapCollection->addRole(new Role('acces'));
+$rolesMapCollection->addRole(new Role('update'));
 $rolesMapCollection->addRole(new Role('create'));
 
 if(isset($_GET['register'])){
@@ -44,17 +44,10 @@ if(isset($_GET['login'])){
     ]);
 }
 
-$user = new User();
-
-$data = $user->get($authenticate->getUser()->getId());
-$data->addRole('fewf');
-$user->change($data,$data->getId());
-
-
 
 if($authenticate->inLogin()){
     echo '<pre>';
-    //var_dump($authenticate->getUser()->getRoles());
+    var_dump($authenticate->getUser());
     echo '</pre>';
     echo '<br>';
     echo '<a href="?logout">logout</a>';
