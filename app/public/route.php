@@ -3,8 +3,10 @@ session_start();
 require('../vendor/autoload.php');
 
 use App\Core\Route\RouteMatch;
+use App\Main\Collections\Role;
 use App\Core\Auth\Authenticate;
 use App\Infrastructure\DB\Connect;
+use App\Main\Collections\RolesMapCollection;
 
 $routeMatch = new RouteMatch();
 require('../route.php');
@@ -21,12 +23,16 @@ if(isset($_GET['logout'])){
     $authenticate->logout();
 }
 
+$rolesMapCollection = new RolesMapCollection;
+$rolesMapCollection->addRole(new Role('acces'));
+$rolesMapCollection->addRole(new Role('update'));
+
 if(isset($_GET['login'])){
     $authenticate->register([
         "name" => "user",
         "password" => "password",
         "email" => "email@citki.com",
-        "roles" => ['acces']
+        "roles" => $rolesMapCollection
     ]);
 }
 
