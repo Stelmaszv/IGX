@@ -52,7 +52,7 @@ class Authenticate
         if($this->inLogin()){
             $table = AuthenticateSettings::TABLE;
             $tableObj = new $table();
-            return $tableObj->get(38);
+            return $tableObj->get($_SESSION['id']);
         }
 
         return null;

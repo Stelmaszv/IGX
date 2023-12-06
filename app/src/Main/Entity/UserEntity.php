@@ -4,6 +4,8 @@ namespace App\Main\Entity;
 
 use App\Core\Model\ModelEntity;
 use App\Infrastructure\DB\DBInterface;
+use App\Main\Collections\Role;
+use App\Main\Collections\RolesMapCollection;
 
 class UserEntity implements ModelEntity
 {
@@ -50,9 +52,19 @@ class UserEntity implements ModelEntity
         return $this->email;
     }
 
-    public function getRoles() : ?string
+    public function getRoles() : RolesMapCollection
     {
-        return $this->roles;
+        $rolesMap =  new RolesMapCollection();
+        foreach(json_decode($this->roles) as $role){
+            $rolesMap->addRole(new Role($role));   
+        }
+
+        return $rolesMap;
+    }
+
+    public function hasRole(string $role) : bool
+    {
+        return in_array($role,json_decode($this->roles));
     }
 
     public function setName($name) : object

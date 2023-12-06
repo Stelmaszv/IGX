@@ -27,7 +27,7 @@ $rolesMapCollection = new RolesMapCollection;
 $rolesMapCollection->addRole(new Role('acces'));
 $rolesMapCollection->addRole(new Role('update'));
 
-if(isset($_GET['login'])){
+if(isset($_GET['register'])){
     $authenticate->register([
         "name" => "user",
         "password" => "password",
@@ -36,8 +36,17 @@ if(isset($_GET['login'])){
     ]);
 }
 
+if(isset($_GET['login'])){
+    $authenticate->login([
+        "email" => "email@citki.com",
+        "password" => "password"
+    ]);
+}
+
 if($authenticate->inLogin()){
-    var_dump($authenticate->getUser());
+    echo '<pre>';
+    var_dump($authenticate->getUser()->getRoles());
+    echo '</pre>';
     echo '<br>';
     echo '<a href="?logout">logout</a>';
     echo '<br>';
