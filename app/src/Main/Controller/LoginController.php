@@ -2,7 +2,6 @@
 
 namespace App\Main\Controller;
 
-use App\Core\Auth\Authenticate;
 use App\Core\Controller\AbstractController;
 
 class LoginController extends AbstractController
