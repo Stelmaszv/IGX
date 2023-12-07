@@ -89,7 +89,7 @@ trait CRUD
         return $records;
     }
 
-    private function getFields(ModelEntity $entity,string $action) : array
+    private function getFields(ModelEntity $entity) : array
     {
         $reflectionEntity = new ReflectionClass($entity);
         $this->entity = $entity;
@@ -212,13 +212,13 @@ trait CRUD
 
     public function add(ModelEntity $entity): void
     {
-        $fields = $this->getFields($entity,'add');
+        $fields = $this->getFields($entity);
         $insertQuery = $this->buildInsertQuery($fields);
         $this->setTimeOut($insertQuery);
     }
 
     public function change(ModelEntity $entity,?int $id) : void
     {
-        $this->update($this->getFields($entity,'upDate'),$id);
+        $this->update($this->getFields($entity),$id);
     }
 }

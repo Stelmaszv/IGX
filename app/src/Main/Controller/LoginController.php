@@ -11,7 +11,6 @@ class LoginController extends AbstractController
 
     function main() : void
     {
-    
         $this->setTemplate('../templete/home.html',
             [
             'name' => $this->getRoute()->getName(),
