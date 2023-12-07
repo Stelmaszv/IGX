@@ -10,24 +10,13 @@ use App\Infrastructure\DB\Connect;
 use App\Main\Collections\RolesMapCollection;
 
 $routeMatch = new RouteMatch();
-require('../route.php');
 
-$routeMatch->setRoute();
 
 $connect = Connect::getInstance();
 $engin = $connect->getEngine();
 
 
 $authenticate = new Authenticate($engin);
-
-if(isset($_GET['logout'])){
-    $authenticate->logout();
-}
-
-$rolesMapCollection = new RolesMapCollection;
-$rolesMapCollection->addRole(new Role('update'));
-$rolesMapCollection->addRole(new Role('create'));
-
 if(isset($_GET['register'])){
     $authenticate->register([
         "name" => "user",
@@ -44,16 +33,29 @@ if(isset($_GET['login'])){
     ]);
 }
 
+require('../route.php');
+
+$routeMatch->setRoute();
+
+if(isset($_GET['logout'])){
+    $authenticate->logout();
+}
+
+$rolesMapCollection = new RolesMapCollection;
+$rolesMapCollection->addRole(new Role('update'));
+$rolesMapCollection->addRole(new Role('create'));
+
+
 
 if($authenticate->inLogin()){
     echo '<pre>';
-    var_dump($authenticate->getUser());
+    //var_dump($authenticate->getUser());
     echo '</pre>';
     echo '<br>';
-    echo '<a href="?logout">logout</a>';
+    echo '<a href="route.php/login">logout</a>';
     echo '<br>';
 }else{
     echo '<br>';
-    echo '<a href="?login">loguj</a>';
+    echo '<a href="route.php/login">loguj</a>';
     echo '<br>';
 }

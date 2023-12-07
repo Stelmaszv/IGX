@@ -2,13 +2,12 @@
 
 namespace App\Core\Model\Fields;
 
-use App\Infrastructure\DB\DBInterface;
 use App\Core\Model\ModelValidateException;
 
 class FieldEmail extends FieldVarchar
 {
     public function validate(mixed $value): void
-    {
+    {        
         if($this->getisUniqe()){
             $count = $this->engine->countSQl('User', [
                 [
@@ -17,7 +16,7 @@ class FieldEmail extends FieldVarchar
                 ]
             ]);
             
-            if($count > 1){
+            if($count >= 1){
                 throw new ModelValidateException('This field is isUniqe !');
             }
 

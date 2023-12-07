@@ -89,7 +89,7 @@ trait CRUD
         return $records;
     }
 
-    private function getFields(ModelEntity $entity) : array
+    private function getFields(ModelEntity $entity,string $action) : array
     {
         $reflectionEntity = new ReflectionClass($entity);
         $this->entity = $entity;
@@ -184,15 +184,41 @@ trait CRUD
         $this->engine->runQuery($sql);
     }
 
+    private function timeOutInsert(string $insertQuery,string $currentTimestamp) : void 
+    {
+        $this->engine->runQuery($insertQuery);
+        $this->engine->runQuery('INSERT INTO `Register` (`time`) VALUES ('.$currentTimestamp.');');
+    }
+
+    private function setTimeOut(string $insertQuery) : void
+    {
+        $query = "SELECT time FROM Register ORDER BY time DESC LIMIT 1";
+        $query = $this->engine->getQueryLoop($query);
+        $currentTimestamp = time();
+
+        if (count($query) > 0) {
+
+            $delayInSeconds = self::TIMEOUT;
+            $lastTimestamp = $query[0]['time'];
+
+            if (!($currentTimestamp - $lastTimestamp < $delayInSeconds)){
+                $this->timeOutInsert($insertQuery,$currentTimestamp);
+            }
+
+        }else{
+            $this->timeOutInsert($insertQuery,$currentTimestamp);
+        }
+    }
+
     public function add(ModelEntity $entity): void
     {
-        $fields = $this->getFields($entity);
+        $fields = $this->getFields($entity,'add');
         $insertQuery = $this->buildInsertQuery($fields);
-        $this->engine->runQuery($insertQuery);
+        $this->setTimeOut($insertQuery);
     }
 
     public function change(ModelEntity $entity,?int $id) : void
     {
-        $this->update($this->getFields($entity),$id);
+        $this->update($this->getFields($entity,'upDate'),$id);
     }
 }

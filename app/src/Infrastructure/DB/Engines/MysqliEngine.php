@@ -34,6 +34,11 @@ class MysqliEngine implements DBInterface
         }
     }
 
+    public function getLostId() : int
+    {
+        return $this->com->insert_id;
+    }
+
     public function escapeString(string $word): string
     {
         return mysqli_real_escape_string($this->com, $word);

@@ -12,6 +12,7 @@ abstract class AbstractModel
     public MigrationBuilder $migrationBuilder;
     private bool $fieldAdded = false;
     private ?ModelEntity $entity;
+    public const TIMEOUT = 3;
 
     abstract protected function initFields() : void;
 
