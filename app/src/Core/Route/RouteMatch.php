@@ -45,6 +45,9 @@ class RouteMatch
                     $this->routeParams->getParams($urls, $this->serverUrl)
                 )
             );
+
+            $controller->setRoutes($this->routes);
+            $controller->chceckAccess();
             $controller->main();
 
         }
@@ -60,6 +63,9 @@ class RouteMatch
                     []
                 )
             );
+
+            $controller->setRoutes($this->routes);
+            $controller->chceckAccess();
             $controller->main();
         }
     }
@@ -142,21 +148,5 @@ class RouteMatch
         }
 
         $this->routeValidator->checkIfRouteExist($this->activeController);
-    }
-
-    public function getRouteAsObject(string $name, array $params = []) : ?Route
-    {
-        foreach ($this->routes as $routeEl) {
-            if (null !== $name && $name === $routeEl->getName()) {
-                return new Route(
-                    (count($params)) ? $this->routeParams->setParams($routeEl, $params) : $routeEl->getUrl(),
-                    $routeEl->getController(),
-                    $routeEl->getName(),
-                    $params
-                );
-            }
-        }
-
-        return null;
     }
 }

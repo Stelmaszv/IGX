@@ -6,6 +6,7 @@ use App\Main\Entity\UserEntity;
 use App\Core\Model\AbstractModel;
 use App\Core\Model\Fields\FieldEmail;
 use App\Core\Model\Fields\FieldVarchar;
+use App\Core\Model\Fields\FieldCollection;
 
 class User extends AbstractModel
 {
@@ -30,9 +31,8 @@ class User extends AbstractModel
             true,
         ));
 
-        $this->addField(new FieldVarchar(
-            'role',
-            100
+        $this->addField(new FieldCollection(
+            'roles'
         ));
 
         $this->addField(new FieldVarchar(

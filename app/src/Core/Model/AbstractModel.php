@@ -12,13 +12,13 @@ abstract class AbstractModel
     public MigrationBuilder $migrationBuilder;
     private bool $fieldAdded = false;
     private ?ModelEntity $entity;
+    public const TIMEOUT = 3;
 
     abstract protected function initFields() : void;
 
-    public function __construct()
+    public function __construct($engine)
     {
-        $connect = Connect::getInstance();
-        $this->engine = $connect->getEngine();
+        $this->engine = $engine;
         $this->migrationBuilder = new MigrationBuilder($this->engine);
         if(!$this->fieldAdded){
             $this->initFields();

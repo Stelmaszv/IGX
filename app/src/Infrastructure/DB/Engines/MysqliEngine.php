@@ -34,6 +34,11 @@ class MysqliEngine implements DBInterface
         }
     }
 
+    public function getLostId() : int
+    {
+        return $this->com->insert_id;
+    }
+
     public function escapeString(string $word): string
     {
         return mysqli_real_escape_string($this->com, $word);
@@ -47,6 +52,11 @@ class MysqliEngine implements DBInterface
         if (!empty($params)) {
             $sql .= ' WHERE ';
             foreach ($params as $param) {
+
+                if(!is_array($param)){
+                    throw new DBException('Invalid data format');
+                }
+
                 if($paramEl > 0){
                     $sql .= ' AND ';
                 }

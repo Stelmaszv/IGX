@@ -1,7 +1,7 @@
 <?php
 namespace App\Core\Auth;
 
-use App\Main\Model\User;
+use App\Core\MapCollection;
 use App\Main\Entity\UserEntity;
 use App\Infrastructure\DB\DBInterface;
 use App\Settings\AuthenticateSettings;
@@ -17,16 +17,25 @@ class Authenticate
 
     public function register(array $data) : void
     {
+        if( !isset($data['email']) || !isset($data['name']) || !isset($data['password']) || !isset($data['roles'])){
+            throw new AuthenticateException("Invalid Data! name, password or roles are required !"); 
+        }
+        
+        if(!$data['roles'] instanceof MapCollection){
+            throw new AuthenticateException("Roles must implement MapCollection !");
+        }
+
         $table = AuthenticateSettings::TABLE;
         $entity = AuthenticateSettings::ENTITY;
         $solt = bin2hex(random_bytes(AuthenticateSettings::SALD));
         $tableObj = new $table();
+
         $tableObj->add(new $entity(
-            $data['name'],
-            password_hash($data['password'].$solt, PASSWORD_BCRYPT),
-            $data['email'],
-            $data['role'],
-            $solt
+           $data['name'],
+           password_hash($data['password'].$solt, PASSWORD_BCRYPT),
+           $data['email'],
+           $data['roles']->map(),
+           $solt
         ));
     }
 
@@ -41,8 +50,8 @@ class Authenticate
     public function getUser() : ?UserEntity{
         if($this->inLogin()){
             $table = AuthenticateSettings::TABLE;
-            $tableObj = new $table();
-            return $tableObj->get(38);
+            $tableObj = new $table($this->engine);
+            return $tableObj->get($_SESSION['id']);
         }
 
         return null;
@@ -62,12 +71,9 @@ class Authenticate
                 $_SESSION['id'] = $dataQuery['id'];
                 return true;
             }
+        }else{
+            throw new AuthenticateException("Invalid login data !"); 
         }
-
-        if($this->inLogin()){
-            throw new AuthenticateException("Invalid login data !");
-        }
-
     }
 
 }

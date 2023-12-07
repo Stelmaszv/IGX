@@ -10,7 +10,7 @@ trait FieldValidate
             throw new ModelValidateException('This field cannot not be null !');
         }
 
-        if($value !== null){
+        if($value !== null && $this->getLength() !== null){
             if (strlen($value) > $this->getLength()){
                 throw new ModelValidateException('This value '.strlen($value).' is to length max length '.$this->getLength().'!');
             }

@@ -7,7 +7,7 @@ use App\Core\Model\FieldValidate;
 use App\Core\Model\ModelException;
 use App\Infrastructure\DB\DBInterface;
 
-class FieldText implements Field
+class FieldCollection implements Field
 {
     use FieldValidate;
     private string $name;
@@ -20,14 +20,12 @@ class FieldText implements Field
 
     public function __construct(
         string $name,
-        ?int $length = null,
         bool $isNull = true,
-        bool $isUniqe = false
     ) {
         $this->name = $name;
-        $this->length = $length;
+        $this->length = null;
         $this->isNull = $isNull;
-        $this->isUniqe = $isUniqe;
+        $this->isUniqe = false;
     }
 
     public function setEngine(DBInterface $engine){
@@ -71,11 +69,7 @@ class FieldText implements Field
 
     public function getFieldName(): string
     {
-        if ($this->getLength() !== null) {
-            return "TEXT(" . $this->getLength() . ")";
-        } else {
-            return "TEXT";
-        }
+        return "JSON";
     }
 
     public function getIsUniqe()
