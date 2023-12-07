@@ -2,6 +2,8 @@
 
 namespace App\Main\Controller;
 
+use App\Main\Model\Cats;
+use App\Main\Entity\CatsEntity;
 use App\Core\Controller\AbstractController;
 
 class Start extends AbstractController

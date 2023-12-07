@@ -16,10 +16,9 @@ abstract class AbstractModel
 
     abstract protected function initFields() : void;
 
-    public function __construct()
+    public function __construct($engine)
     {
-        $connect = Connect::getInstance();
-        $this->engine = $connect->getEngine();
+        $this->engine = $engine;
         $this->migrationBuilder = new MigrationBuilder($this->engine);
         if(!$this->fieldAdded){
             $this->initFields();

@@ -45,6 +45,7 @@ class RouteMatch
                     $this->routeParams->getParams($urls, $this->serverUrl)
                 )
             );
+            $controller->init();
             $controller->chceckAccess();
             $controller->main();
 
@@ -61,6 +62,7 @@ class RouteMatch
                     []
                 )
             );
+            $controller->init();
             $controller->chceckAccess();
             $controller->main();
         }

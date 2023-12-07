@@ -5,6 +5,7 @@ namespace App\Core\Controller;
 use Random\Engine;
 use App\Core\Route\Route;
 use App\Core\Auth\Authenticate;
+use App\Core\Model\AbstractModel;
 use App\Infrastructure\DB\Connect;
 use App\Infrastructure\DB\DBInterface;
 
@@ -12,29 +13,37 @@ abstract class AbstractController
 {
     private ?Route $route;
     private ?VuexTemplate $vuexTemplate;
-    private Authenticate $authenticate;
-    public DBInterface $engine;
+    private Authenticate $auth;
+    private DBInterface $engine;
     protected ?string $role = null;
 
-    public function __construct()
-    {
+    public function init(){
         $connect = Connect::getInstance();
         $this->engine = $connect->getEngine();
+        $this->auth = new Authenticate($this->engine);
+    }
+
+    protected function getModel($model){
+        return new $model($this->engine);
+    }
+
+    protected function getAuthenticate(){
+        return $this->auth;
     }
 
     abstract public function main() : void;
 
     public function chceckAccess() : void{
         if($this->role !== null){
-            $this->authenticate = new Authenticate($this->engine);
 
-            if(!$this->authenticate->inLogin()){
+            if(!$this->auth->inLogin()){
                 throw new UnauthorizedException('Unauthorized access !');
             }
 
-            if(!$this->authenticate->getUser()->hasRole($this->role)){
+            if(!$this->auth->getUser()->hasRole($this->role)){
                 throw new UnauthorizedException('Unauthorized access !');
             }
+
         }
     }
 

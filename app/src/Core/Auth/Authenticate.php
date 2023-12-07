@@ -51,7 +51,7 @@ class Authenticate
     public function getUser() : ?UserEntity{
         if($this->inLogin()){
             $table = AuthenticateSettings::TABLE;
-            $tableObj = new $table();
+            $tableObj = new $table($this->engine);
             return $tableObj->get($_SESSION['id']);
         }
 
