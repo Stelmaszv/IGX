@@ -1,7 +1,6 @@
 <?php
 namespace App\Core\Auth;
 
-use App\Main\Model\User;
 use App\Core\MapCollection;
 use App\Main\Entity\UserEntity;
 use App\Infrastructure\DB\DBInterface;
@@ -18,7 +17,7 @@ class Authenticate
 
     public function register(array $data) : void
     {
-        if(!isset($data['name']) || !isset($data['password']) || !isset($data['roles'])){
+        if( !isset($data['email']) || !isset($data['name']) || !isset($data['password']) || !isset($data['roles'])){
             throw new AuthenticateException("Invalid Data! name, password or roles are required !"); 
         }
         

@@ -6,7 +6,7 @@ use App\Core\Controller\AbstractController;
 
 class LoginController extends AbstractController
 {
-    protected ?string $role = 'create';
+    protected ?string $role = 'login';
 
     function main() : void
     {

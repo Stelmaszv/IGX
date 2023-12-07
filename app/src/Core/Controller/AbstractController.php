@@ -4,8 +4,10 @@ namespace App\Core\Controller;
 
 use Random\Engine;
 use App\Core\Route\Route;
+use App\Core\Route\RouteParam;
 use App\Core\Auth\Authenticate;
 use App\Core\Model\AbstractModel;
+use App\Core\Route\RouteNavigator;
 use App\Infrastructure\DB\Connect;
 use App\Infrastructure\DB\DBInterface;
 
@@ -15,6 +17,8 @@ abstract class AbstractController
     private ?VuexTemplate $vuexTemplate;
     private Authenticate $auth;
     private DBInterface $engine;
+    protected RouteNavigator $routeNavigator;
+    private array $routes;
     protected ?string $role = null;
 
     protected function getModel($model){
@@ -34,17 +38,22 @@ abstract class AbstractController
                 throw new UnauthorizedException('Unauthorized access !');
             }
 
-            if(!$this->auth->getUser()->hasRole($this->role)){
+            if($this->role !== 'login' && !$this->auth->getUser()->hasRole($this->role)){
                 throw new UnauthorizedException('Unauthorized access !');
             }
 
         }
     }
 
+    public function setRoutes(array $routes){
+        $this->routes = $routes;
+    }
+
     public function init(){
         $connect = Connect::getInstance();
         $this->engine = $connect->getEngine();
         $this->auth = new Authenticate($this->engine);
+        $this->routeNavigator = new RouteNavigator($this->routes);
     }
 
     public function setTemplate(string $file ,array $attributes = []) : void

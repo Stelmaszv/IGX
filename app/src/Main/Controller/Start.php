@@ -9,7 +9,7 @@ use App\Core\Controller\AbstractController;
 class Start extends AbstractController
 {
     function main() : void
-    {        
+    {       
         $this->setTemplate('../templete/home.html',
             [
             'name' => $this->getRoute()->getName(),
