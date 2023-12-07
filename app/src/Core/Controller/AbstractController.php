@@ -17,12 +17,6 @@ abstract class AbstractController
     private DBInterface $engine;
     protected ?string $role = null;
 
-    public function init(){
-        $connect = Connect::getInstance();
-        $this->engine = $connect->getEngine();
-        $this->auth = new Authenticate($this->engine);
-    }
-
     protected function getModel($model){
         return new $model($this->engine);
     }
@@ -45,6 +39,12 @@ abstract class AbstractController
             }
 
         }
+    }
+
+    public function init(){
+        $connect = Connect::getInstance();
+        $this->engine = $connect->getEngine();
+        $this->auth = new Authenticate($this->engine);
     }
 
     public function setTemplate(string $file ,array $attributes = []) : void
