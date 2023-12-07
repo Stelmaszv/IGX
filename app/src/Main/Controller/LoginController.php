@@ -12,12 +12,12 @@ class LoginController extends AbstractController
     {
         $this->setTemplate('../templete/home.html',
             [
-            'name' => $this->getRoute()->getName(),
-            'loop' => [
-                ["number" => 1],
-                ["number" => 2]
-            ],
-            'zero' => true
+                'name' => $this->getRoute()->getName(),
+                'loop' => [
+                    ["number" => 1],
+                    ["number" => 2]
+                ],
+                'zero' => true
             ]
         );
 
