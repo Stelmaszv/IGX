@@ -18,14 +18,25 @@ abstract class AbstractController
     private Authenticate $auth;
     private DBInterface $engine;
     protected RouteNavigator $routeNavigator;
-    private array $routes;
     protected ?string $role = null;
 
-    protected function getModel($model){
+    public function __construct(array $gards = [])
+    {
+        $connect = Connect::getInstance();
+        $this->engine = $connect->getEngine();
+        $this->auth = new Authenticate($this->engine);
+
+        foreach($gards as $gard){
+            $gardObj = new $gard;
+            $gardObj->authorized($this);
+        }
+    }
+
+    public function getModel($model){
         return new $model($this->engine);
     }
 
-    protected function getAuthenticate(){
+    public function getAuthenticate(){
         return $this->auth;
     }
 
@@ -46,23 +57,16 @@ abstract class AbstractController
     }
 
     public function setRoutes(array $routes){
-        $this->routes = $routes;
+        $this->routeNavigator = new RouteNavigator($routes);
     }
 
-    public function init(){
-        $connect = Connect::getInstance();
-        $this->engine = $connect->getEngine();
-        $this->auth = new Authenticate($this->engine);
-        $this->routeNavigator = new RouteNavigator($this->routes);
-    }
-
-    public function setTemplate(string $file ,array $attributes = []) : void
+    protected function setTemplate(string $file ,array $attributes = []) : void
     {
         $this->vuexTemplate = new VuexTemplate($file);
         $this->vuexTemplate->setVariables($attributes);
     }
 
-    public function getTemplate() : ?string
+    protected function getTemplate() : ?string
     {
         return $this->vuexTemplate?->render();
     }

@@ -221,4 +221,10 @@ trait CRUD
     {
         $this->update($this->getFields($entity),$id);
     }
+
+    public function count(array $params) : int
+    {
+        $modelName = explode('\\',get_class($this));
+        return $this->engine->countSQL(end($modelName),$params);
+    }
 }

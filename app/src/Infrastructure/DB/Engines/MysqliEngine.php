@@ -52,6 +52,11 @@ class MysqliEngine implements DBInterface
         if (!empty($params)) {
             $sql .= ' WHERE ';
             foreach ($params as $param) {
+
+                if(!is_array($param)){
+                    throw new DBException('Invalid data format');
+                }
+
                 if($paramEl > 0){
                     $sql .= ' AND ';
                 }

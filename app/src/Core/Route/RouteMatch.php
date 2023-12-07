@@ -47,7 +47,6 @@ class RouteMatch
             );
 
             $controller->setRoutes($this->routes);
-            $controller->init();
             $controller->chceckAccess();
             $controller->main();
 
@@ -66,7 +65,6 @@ class RouteMatch
             );
 
             $controller->setRoutes($this->routes);
-            $controller->init();
             $controller->chceckAccess();
             $controller->main();
         }
