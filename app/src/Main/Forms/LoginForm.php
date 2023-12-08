@@ -11,14 +11,16 @@ class LoginForm extends AbstractForm
 
     protected function initFields() : void
     {
-        $this->addField(new Input([
-            'type' => 'text',
-            'name' => "login",
-            'id' => "login",
-            'label' => "Podaj Login : ",
-            'divClass' => 'fqeff',
-            'class' => 'form'
-        ]));
+        $this->addField(new Input(
+            [
+                'type' => 'text',
+                'name' => "login",
+                'id' => "login",
+                'label' => "Podaj Login : ",
+                'divClass' => 'fqeff',
+                'class' => 'form'
+            ]
+        ));
 
         $this->addField(new Input(
             [

@@ -22,13 +22,15 @@ class FormBulider
 
     public function genrate(array $attribute) : string
     {
+        $formTag = '<form ';
+        foreach($attribute as $key => $attribut)
+        {
+            $formTag.= $key.'='.$attribut.' ';
+        }
 
-        $method = (isset($attribute['method'])) ? 'method='.$attribute['method'].'' : '';
-        $class = (isset($attribute['class'])) ? 'class='.$attribute['class'].'' : '';
-        $id = (isset($attribute['id'])) ? 'id='.$attribute['id'].'' : '';
-        $action = (isset($attribute['action'])) ? 'id='.$attribute['action'].'' : '';
+        $formTag.= '>';
 
-        $form = '<form '.$method.' '.$class.' '.$id.' '.$action.'>';
+        $form = $formTag;
 
         foreach ($this->formArray as $field){
             $form.= $field;

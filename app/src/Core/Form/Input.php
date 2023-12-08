@@ -29,11 +29,15 @@ class Input implements FormGenerator
 
     private function getInput() : string 
     {
-        $type = (isset($this->attribute['type'])) ? 'type='.$this->attribute['type'].'' : '';
-        $id = (isset($this->attribute['id'])) ? 'id='.$this->attribute['id'].'' : '';
-        $name = (isset($this->attribute['name'])) ? 'name='.$this->attribute['name'].'' : '';
-        $class = (isset($this->attribute['class'])) ? 'class='.$this->attribute['class'].'' : '';
+        $input = '<input ';
 
-        return '<input '.$type.' '.$class.' '.$id.' '.$name.'>';
+        foreach($this->attribute as $key => $attribut)
+        {
+            if($key != 'label' && $key != 'divClass'){
+                $input.= $key.'='.$attribut.' ';
+            }
+        }
+
+        return $input.='>';
     }
 }
