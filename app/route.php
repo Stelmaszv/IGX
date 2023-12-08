@@ -15,9 +15,7 @@ $routeMatch->addRoute(
 $routeMatch->addRoute(
     [
         'url' => '/',
-        'Controller' => new Start([
-            HasCat::class
-        ]),
+        'Controller' => new Start(),
         'name' => 'home',
         'home' => true
     ]
