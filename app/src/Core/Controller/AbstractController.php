@@ -65,7 +65,20 @@ abstract class AbstractController
         return $this->auth;
     }
 
-    abstract public function main() : void;
+    abstract public function InitMain() : void;
+
+    public function main(){
+        if(isset($_POST)){
+            return $this->onPost($_POST);
+            
+        }
+
+        return $this->InitMain();
+    }
+
+    public function onPost($POST){
+
+    }
 
     public function chceckAccess() : void{
         if($this->role !== null){

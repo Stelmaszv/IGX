@@ -8,7 +8,7 @@ class LoginController extends AbstractController
 {
     protected ?string $role = 'login';
 
-    function main() : void
+    function InitMain() : void
     {
         $this->setTemplate('../templete/home.html',
             [

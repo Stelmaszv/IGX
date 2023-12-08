@@ -14,8 +14,8 @@ class LoginForm extends AbstractForm
         $this->addField(new Input(
             [
                 'type' => 'text',
-                'name' => "login",
-                'id' => "login",
+                'name' => "email",
+                'id' => "email",
                 'label' => "Podaj Login : ",
                 'divClass' => 'fqeff',
                 'class' => 'form'
