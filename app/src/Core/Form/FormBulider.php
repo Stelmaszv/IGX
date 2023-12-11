@@ -4,14 +4,15 @@ namespace App\Core\Form;
 
 class FormBulider
 {
-    private AbstractForm $form; 
+    private ?AbstractForm $form = null; 
     private array $formArray; 
 
     public function setForm(AbstractForm $form){
         $this->form = $form;
     }
 
-    public function getForm(){
+    public function getForm(): ?array
+    {
         $this->formArray = [];
         foreach ($this->form->getFields() as $field){
             $this->formArray[] = $field->generate();
@@ -39,5 +40,10 @@ class FormBulider
         $form .= '</form>';
 
         return $form;
+    }
+
+    public function getAbstractForm() : ?AbstractForm 
+    {
+        return $this->form;
     }
 }

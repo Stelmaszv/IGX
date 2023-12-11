@@ -44,8 +44,13 @@ abstract class AbstractController
         return $this->formBulider->setForm(new $form());
     }
 
-    public function getForm(){
-        return $this->formBulider->getForm();
+    public function getForm() : ?array
+    {
+        if($this->formBulider->getAbstractForm() === null){
+            return null;
+        }
+
+        return $this->formBulider->getForm();  
     }
 
     public function genrateForm(array $attribute){
@@ -76,6 +81,12 @@ abstract class AbstractController
     }
 
     public function onPost(array $POST){}
+
+    public function createFormModel($model){
+        if(!new $model($this->engine) instanceof AbstractModel){
+            throw new Exception('This not instance of AbstractModel !');
+        }
+    }
 
     public function chceckAccess() : void{
         if($this->role !== null){
