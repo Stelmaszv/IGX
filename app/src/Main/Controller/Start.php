@@ -37,10 +37,7 @@ class Start extends AbstractController
     public function onPost($POST){
         try{
             $auth = $this->getAuthenticate();
-            $auth->login([
-                'email' => $POST['email'],
-                'password' => $POST['password']
-            ]);
+            $auth->login($POST);
         }catch (AuthenticateException $Authenticate ){
             $this->erros[] =  [
                 "error" => $Authenticate->getMessage()

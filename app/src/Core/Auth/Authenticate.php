@@ -63,8 +63,15 @@ class Authenticate
 
     public function login(array $data) : bool
     {
+        if(
+            !isset($data['email']) || !isset($data['password'])
+        ){
+            return false;
+        }
+            
         $dataQuery = $this->engine->getQueryLoop('SELECT id,'.$this->engine->escapeString(array_keys($data)[0]).','.$this->engine->escapeString(array_keys($data)[1]).', salt FROM `User` WHERE '.$this->engine->escapeString(array_keys($data)[0]).' = "'.$this->engine->escapeString($data['email']).'"');
 
+       
         if(count($dataQuery) > 0){
             $dataQuery = $dataQuery[0];
             if (password_verify($data['password'].$dataQuery['salt'], $dataQuery['password'])) {
