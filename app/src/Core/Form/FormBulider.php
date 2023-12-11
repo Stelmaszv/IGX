@@ -2,18 +2,31 @@
 
 namespace App\Core\Form;
 
+use Exception;
+use App\Core\Model\AbstractModel;
+
 class FormBulider
 {
-    private ?AbstractForm $form = null; 
+    private $form = null; 
     private array $formArray; 
 
-    public function setForm(AbstractForm $form){
-        $this->form = $form;
+    public function setForm($form){
+        if($form instanceof AbstractForm || $form instanceof TempleteForm){
+            $this->form = $form;
+        }else{
+            throw new Exception('This not instance of AbstractForm !');
+        }
+    }
+
+    public function createFormModel(AbstractModel $model, array $modification){
+       $model = new GetFromFromModel($model, $modification);
+       $this->setForm($model->createForm());
     }
 
     public function getForm(): ?array
     {
         $this->formArray = [];
+        
         foreach ($this->form->getFields() as $field){
             $this->formArray[] = $field->generate();
         }
@@ -42,7 +55,7 @@ class FormBulider
         return $form;
     }
 
-    public function getAbstractForm() : ?AbstractForm 
+    public function getAbstractForm()
     {
         return $this->form;
     }

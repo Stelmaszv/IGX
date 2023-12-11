@@ -16,6 +16,11 @@ abstract class AbstractModel
 
     abstract protected function initFields() : void;
 
+    public function getFields() : array
+    {
+        return $this->fields;
+    }
+
     public function __construct($engine)
     {
         $this->engine = $engine;

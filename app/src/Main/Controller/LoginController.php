@@ -31,7 +31,8 @@ class LoginController extends AbstractController
     }
 
     
-    public function onPost($POST){
+    public function onPost($POST) : void
+    {
 
         try{
             $auth = $this->getAuthenticate();
