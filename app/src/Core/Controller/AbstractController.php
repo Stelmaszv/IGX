@@ -82,13 +82,13 @@ abstract class AbstractController
 
     public function onPost(array $POST): void {}
 
-    public function createFormModel($model,array $modification){
-        
+    public function createFormModel($model,array $modification ,int $id = null){
+
         if(!new $model($this->engine) instanceof AbstractModel){
             throw new Exception('This not instance of AbstractModel !');
         }
 
-        $this->formBulider->createFormModel(new $model($this->engine),$modification);
+        $this->formBulider->createFormModel(new $model($this->engine),$modification,$id);
     }
 
     public function chceckAccess() : void{

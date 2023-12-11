@@ -6,13 +6,16 @@ use App\Core\Model\AbstractModel;
 
 class GetFromFromModel
 {
-    private AbstractModel $model; 
+    private ?int $id;
+    private AbstractModel $model;
+    private $modelData;
     private array $modification;
 
-    function __construct(AbstractModel $model, array $modification)
+    function __construct(AbstractModel $model, array $modification, int $id = null)
     { 
         $this->model = $model;
         $this->modification = $modification;
+        $this->id = $id;
     }
 
     public function createForm() : TempleteForm
@@ -29,11 +32,17 @@ class GetFromFromModel
                     'name' => isset($this->modification["fields"][$objModel->getName()]["name"])? $this->modification["fields"][$objModel->getName()]["name"] : $field, 
                     'id' => isset($this->modification["fields"][$objModel->getName()]["id"])? $this->modification["fields"][$objModel->getName()]["id"] : $field,
                     'label' => isset($this->modification["fields"][$objModel->getName()]["label"])? $this->modification["fields"][$objModel->getName()]["label"] : ucfirst($objModel->getName()),
-                    'class' => isset($this->modification["fields"][$objModel->getName()]["class"])? $this->modification["fields"][$objModel->getName()]["class"] : $field
+                    'class' => isset($this->modification["fields"][$objModel->getName()]["class"])? $this->modification["fields"][$objModel->getName()]["class"] : $field,
                 ];
 
                 if($this->modification['div']){
                     $fields['divClass'] = $this->modification['div'];
+                }
+
+                if($this->id){
+                    $method = 'get'.$objModel->getName();
+                    $fields['value'] = $this->model->get($this->id)->$method();
+
                 }
 
                 $templeteForm->addField(new Input($fields));

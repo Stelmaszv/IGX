@@ -18,8 +18,8 @@ class FormBulider
         }
     }
 
-    public function createFormModel(AbstractModel $model, array $modification){
-       $model = new GetFromFromModel($model, $modification);
+    public function createFormModel(AbstractModel $model, array $modification, int $id = null){
+       $model = new GetFromFromModel($model, $modification,$id);
        $this->setForm($model->createForm());
     }
 
