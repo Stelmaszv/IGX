@@ -49,7 +49,6 @@ class RouteMatch
             $controller->setRoutes($this->routes);
             $controller->chceckAccess();
             $controller->main();
-
         }
 
         if ($home && $this->activeController === null) {

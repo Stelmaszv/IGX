@@ -2,25 +2,50 @@
 
 namespace App\Main\Controller;
 
+use App\Main\Forms\LoginForm;
+use App\Core\Auth\AuthenticateException;
 use App\Core\Controller\AbstractController;
 
 class LoginController extends AbstractController
 {
-    protected ?string $role = 'login';
+    private array $erros = [];
 
     function InitMain() : void
-    {
+    {   
+        $this->setForm(LoginForm::class);
+        $this->getForm();
+
         $this->setTemplate('../templete/home.html',
             [
-                'name' => $this->getRoute()->getName(),
-                'loop' => [
-                    ["number" => 1],
-                    ["number" => 2]
-                ],
-                'zero' => true
+            'form' => $this->genrateForm([
+                'method' => 'POST',
+                'class' => 'btn'
+            ]),
+            'name' => $this->getRoute()->getName(),
+            'zero' => true,
+            'erros' => $this->erros
             ]
         );
 
         echo $this->getTemplate();
+    }
+
+    
+    public function onPost($POST){
+
+        try{
+            $auth = $this->getAuthenticate();
+            $auth->login($POST);
+        }catch (AuthenticateException $Authenticate ){
+            $this->erros[] =  [
+                "error" => $Authenticate->getMessage()
+            ];
+        }
+
+        if(count($this->erros) === 0){
+            var_dump('Login');
+        }
+
+        $this->InitMain();
     }
 }

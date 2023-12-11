@@ -1,8 +1,17 @@
 <?php
 
-use App\Main\Gard\HasCat;
 use App\Main\Controller\Start;
 use App\Main\Controller\LoginController;
+use App\Main\Controller\RegisterController;
+
+
+$routeMatch->addRoute(
+    [
+        'url' => '/register',
+        'Controller' => new RegisterController(),
+        'name' => 'register'
+    ]
+);
 
 $routeMatch->addRoute(
     [

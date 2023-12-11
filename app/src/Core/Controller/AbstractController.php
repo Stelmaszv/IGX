@@ -68,17 +68,14 @@ abstract class AbstractController
     abstract public function InitMain() : void;
 
     public function main(){
-        if(isset($_POST)){
+        if( count($_POST) > 0 ){
             return $this->onPost($_POST);
-            
         }
 
         return $this->InitMain();
     }
 
-    public function onPost($POST){
-
-    }
+    public function onPost(array $POST){}
 
     public function chceckAccess() : void{
         if($this->role !== null){
