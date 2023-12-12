@@ -8,7 +8,7 @@ use App\Core\Model\AbstractModel;
 class FormBulider
 {
     private $form = null; 
-    private array $formArray; 
+    private array $formArray = []; 
 
     public function setForm($form){
         if($form instanceof AbstractForm || $form instanceof TempleteForm){

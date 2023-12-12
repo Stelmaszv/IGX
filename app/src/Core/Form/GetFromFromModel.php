@@ -49,9 +49,7 @@ class GetFromFromModel
             }
         }
 
-        $templeteForm->addField(new Button(
-            $this->modification['submit']
-        ));
+        $templeteForm->addField(new Button($this->modification['submit']));
 
         return $templeteForm;
     }

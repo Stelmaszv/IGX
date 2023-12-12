@@ -3,11 +3,15 @@
 namespace App\Main\Controller;
 
 use App\Main\Model\User;
+use App\Core\Auth\AuthenticateException;
+use App\Core\Model\ModelValidateException;
 use App\Core\Controller\AbstractController;
 
 class RegisterController extends AbstractController
-{
-    function InitMain() : void
+{   
+    private array $erros = [];
+
+    public function InitMain() : void
     {   
         $this->createFormModel(User::class,[
             "exclude" => [
@@ -37,8 +41,17 @@ class RegisterController extends AbstractController
         echo $this->getTemplate();
     }
 
-    function onPost(array $POST): void
-    {
+    public function onPost(array $POST): void
+    {   
+        $POST['roles'] = []; 
+        try{
+            $auth = $this->getAuthenticate();
+            $auth->register($POST);
+        }catch (ModelValidateException $ModelValidateException ){
+            $this->erros[] =  [
+                "error" => $ModelValidateException->getMessage()
+            ];
+        }
         $this->InitMain();
     }
 }
