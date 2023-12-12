@@ -7,7 +7,7 @@ use App\Core\Model\ModelValidateException;
 class FieldEmail extends FieldVarchar
 {
     public function validate(mixed $value): void
-    {        
+    {     
         if($this->getisUniqe()){
             $count = $this->engine->countSQl('User', [
                 [

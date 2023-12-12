@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Core\Model;
-use App\Infrastructure\DB\Connect;
 use App\Infrastructure\DB\DBInterface;
 
 abstract class AbstractModel
@@ -21,7 +20,7 @@ abstract class AbstractModel
         return $this->fields;
     }
 
-    public function __construct($engine)
+    public function __construct(DBInterface $engine)
     {
         $this->engine = $engine;
         $this->migrationBuilder = new MigrationBuilder($this->engine);

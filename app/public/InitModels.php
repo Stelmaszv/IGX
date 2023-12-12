@@ -3,17 +3,21 @@
 require('../vendor/autoload.php');
 
 use App\Core\Model\AbstractModel;
+use App\Infrastructure\DB\Connect;
+use App\Infrastructure\DB\DBInterface;
 
 $files = glob('../src/Main/Model/*');
+$connect = Connect::getInstance();
+$engin = $connect->getEngine();
 
-function loopExecute(array $loop): void
+function loopExecute(array $loop,DBInterface $engin): void
 {
     foreach ($loop as $file) {
-        execute($file);
+        execute($file,$engin);
     }
 }
 
-function execute(string $file): void
+function execute(string $file,DBInterface $engin): void
 {
     if (!is_dir($file)) {
         $urls = explode('/', $file);
@@ -25,7 +29,7 @@ function execute(string $file): void
         $nameSpace = str_replace($className, "", $nameSpace);
         $nameSpace = str_replace("/", "\\", $nameSpace);
 
-        $model = new $nameSpace();
+        $model = new $nameSpace($engin);
         if ($model instanceof AbstractModel) {
             echo "Init Model - $modelName <br>";
             $model->initModel();
@@ -37,5 +41,5 @@ function execute(string $file): void
     }
 }
 
-loopExecute($files);
+loopExecute($files,$engin);
 ?>

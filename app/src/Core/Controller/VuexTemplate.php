@@ -2,7 +2,6 @@
 namespace App\Core\Controller;
 
 use Exception;
-use PhpParser\Node\Stmt\TryCatch;
 
 class VuexTemplate
 {

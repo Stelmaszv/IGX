@@ -89,7 +89,7 @@ trait CRUD
         return $records;
     }
 
-    private function getFields(ModelEntity $entity) : array
+    private function getField(ModelEntity $entity) : array
     {
         $reflectionEntity = new ReflectionClass($entity);
         $this->entity = $entity;
@@ -99,9 +99,13 @@ trait CRUD
             if($field->name !== 'id') {
                 $fieldObj = $this->findField($this->fields, $field->name);
                 $fieldObj->setEngine($this->engine);
-                $fieldObj->validate((empty($field->getValue($entity))) ? null : $field->getValue($entity));
+
                 $field->setAccessible(true);
                 $fields[$field->getName()] = $field->getValue($entity);
+            
+                $value = (empty($field->getValue($entity))) ? null : $field->getValue($entity);
+
+                $fieldObj->validate($value);
             }
         }
 
@@ -212,14 +216,14 @@ trait CRUD
 
     public function add(ModelEntity $entity): void
     {
-        $fields = $this->getFields($entity);
+        $fields = $this->getField($entity);
         $insertQuery = $this->buildInsertQuery($fields);
         $this->setTimeOut($insertQuery);
     }
 
     public function change(ModelEntity $entity,?int $id) : void
     {
-        $this->update($this->getFields($entity),$id);
+        $this->update($this->getField($entity),$id);
     }
 
     public function count(array $params) : int
