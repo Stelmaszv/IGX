@@ -1,6 +1,8 @@
 <?php
 namespace App\Core\Controller;
 
+use Exception;
+
 class VuexTemplate
 {
     private string $code;
@@ -10,8 +12,15 @@ class VuexTemplate
 
     public function __construct(string $url)
     {
-        $this->code = $this->cleanCode(file_get_contents($url));
+
+        if (!file_exists($url)) {
+            throw new Exception('File "'.$url.'" Template not Exist !!');
+        }
+
+        $content = file_get_contents($url);
+        $this->code = $this->cleanCode($content);
         $this->keywords = [];
+    
     }
 
     private function cleanCode(string $code) : string

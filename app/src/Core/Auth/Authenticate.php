@@ -21,22 +21,20 @@ class Authenticate
             throw new AuthenticateException("Invalid Data! name, password or roles are required !"); 
         }
         
-        if(!$data['roles'] instanceof MapCollection){
-            throw new AuthenticateException("Roles must implement MapCollection !");
-        }
-
         $table = AuthenticateSettings::TABLE;
         $entity = AuthenticateSettings::ENTITY;
         $solt = bin2hex(random_bytes(AuthenticateSettings::SALD));
-        $tableObj = new $table();
+        $tableObj = new $table($this->engine);
+        
+        $objEntity = new $entity(
+            $data['name'],
+            password_hash($data['password'].$solt, PASSWORD_BCRYPT),
+            $data['email'],
+            $data['roles']->map(),
+            $solt
+        );
 
-        $tableObj->add(new $entity(
-           $data['name'],
-           password_hash($data['password'].$solt, PASSWORD_BCRYPT),
-           $data['email'],
-           $data['roles']->map(),
-           $solt
-        ));
+        $tableObj->add($objEntity);
     }
 
     public function inLogin()  : bool {
@@ -63,8 +61,15 @@ class Authenticate
 
     public function login(array $data) : bool
     {
+        if(
+            !isset($data['email']) || !isset($data['password'])
+        ){
+            return false;
+        }
+            
         $dataQuery = $this->engine->getQueryLoop('SELECT id,'.$this->engine->escapeString(array_keys($data)[0]).','.$this->engine->escapeString(array_keys($data)[1]).', salt FROM `User` WHERE '.$this->engine->escapeString(array_keys($data)[0]).' = "'.$this->engine->escapeString($data['email']).'"');
 
+       
         if(count($dataQuery) > 0){
             $dataQuery = $dataQuery[0];
             if (password_verify($data['password'].$dataQuery['salt'], $dataQuery['password'])) {

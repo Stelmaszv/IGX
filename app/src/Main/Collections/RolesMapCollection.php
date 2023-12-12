@@ -2,9 +2,8 @@
 
 namespace App\Main\Collections;
 
-use Exception;
-use App\Core\MapCollection;
 use App\Main\Collections\Role;
+use App\Core\Model\MapCollection;
 
 class RolesMapCollection implements MapCollection
 {
