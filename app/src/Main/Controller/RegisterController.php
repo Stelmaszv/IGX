@@ -2,6 +2,7 @@
 
 namespace App\Main\Controller;
 
+use App\Main\Model\Cats;
 use App\Main\Model\User;
 use App\Main\Collections\Role;
 use App\Core\Model\ModelValidateException;
@@ -14,25 +15,28 @@ class RegisterController extends AbstractController
 
     function InitMain() : void
     {   
+        //$this->createAuthFromModel(User::class);
         $this->createFormModel(User::class,[
             "exclude" => [
                 "salt"
             ],
             "submit" => [
                 'type' => 'submit',
-                'label' => "Register",
+                'label' => "Register ",
                 'class' => 'btn'
             ],
             "fields" => [
                 "password" => [
                     'label' => "Register",
                     "class" => "form",
-                    "type"  => "password",
+                    "type"  => "password"
                 ]
             ],
+            'labelSeperetor' => ':',
             "div" => 'class',
         ]);
         $this->getForm();
+    
 
         $this->setTemplate('../templete/Register.html',[
             'form' => $this->genrateForm([

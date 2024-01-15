@@ -82,6 +82,10 @@ abstract class AbstractController
 
     public function onPost(array $POST): void {}
 
+    public function createAuthFromModel($model,array $modification = []){
+
+    }
+
     public function createFormModel($model,array $modification ,int $id = null){
 
         if(!new $model($this->engine) instanceof AbstractModel){
