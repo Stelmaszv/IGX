@@ -7,6 +7,8 @@ class FromFields
     public const FIELDS = [
         "FieldVarchar" => 'test',
         "FieldEmail" => 'text',
-        "FieldCollection" => 'texarea'
+        "FieldINT" => 'number',
+        "FieldCollection" => 'texarea',
+        "FieldText" => 'texarea'
     ];
 }

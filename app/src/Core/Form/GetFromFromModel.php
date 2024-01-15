@@ -4,6 +4,7 @@ namespace App\Core\Form;
 
 use App\Core\Form\Types\Input;
 use App\Core\Form\Types\Button;
+use App\Core\Form\Types\Texarea;
 use App\Core\Model\AbstractModel;
 
 class GetFromFromModel
@@ -28,17 +29,19 @@ class GetFromFromModel
             $field = explode('\\',get_class($field));
             $field = FromFields::FIELDS[end($field)];
             $exclude = isset($this->modification['exclude']) ? !in_array($objModel->getName(),$this->modification['exclude']) : true;
-            if($field !== 'texarea' && $exclude){
-                $labelSeperetor = isset($this->modification['labelSeperetor'])? ' '.$this->modification['labelSeperetor'].' ' : '';
 
-                $fields = [
-                    'type' => isset($this->modification["fields"][$objModel->getName()]["type"])? $this->modification["fields"][$objModel->getName()]["type"] : $field,
-                    'name' => isset($this->modification["fields"][$objModel->getName()]["name"])? $this->modification["fields"][$objModel->getName()]["name"] : $objModel->getName(), 
-                    'label' => isset($this->modification["fields"][$objModel->getName()]["label"])? $this->modification["fields"][$objModel->getName()]["label"].$labelSeperetor : ucfirst($objModel->getName()).$labelSeperetor,
-                    'class' => isset($this->modification["fields"][$objModel->getName()]["class"])? $this->modification["fields"][$objModel->getName()]["class"] : $field
-                ];
+            $labelSeperetor = isset($this->modification['labelSeperetor'])? ' '.$this->modification['labelSeperetor'].' ' : '';
 
-                $fields['id'] = $fields['label'];
+            $fields = [
+                'type' => isset($this->modification["fields"][$objModel->getName()]["type"])? $this->modification["fields"][$objModel->getName()]["type"] : $field,
+                'name' => isset($this->modification["fields"][$objModel->getName()]["name"])? $this->modification["fields"][$objModel->getName()]["name"] : $objModel->getName(), 
+                'label' => isset($this->modification["fields"][$objModel->getName()]["label"])? $this->modification["fields"][$objModel->getName()]["label"].$labelSeperetor : ucfirst($objModel->getName()).$labelSeperetor,
+                'class' => isset($this->modification["fields"][$objModel->getName()]["class"])? $this->modification["fields"][$objModel->getName()]["class"] : $field
+            ];
+
+            $fields['id'] = isset($this->modification["fields"][$objModel->getName()]["label"])? $this->modification["fields"][$objModel->getName()]["label"] : ucfirst($objModel->getName());
+
+            if($exclude){
 
                 if(isset($this->modification['div'])){
                     $fields['divClass'] = $this->modification['div'];
@@ -47,10 +50,14 @@ class GetFromFromModel
                 if($this->id){
                     $method = 'get'.$objModel->getName();
                     $fields['value'] = $this->model->get($this->id)->$method();
-
                 }
 
-                $templeteForm->addField(new Input($fields));
+
+                if($field !== 'texarea'){
+                    $templeteForm->addField(new Input($fields));
+                }else{
+                    $templeteForm->addField(new Texarea($fields));
+                }
             }
         }
 

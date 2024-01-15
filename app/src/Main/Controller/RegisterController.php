@@ -16,6 +16,7 @@ class RegisterController extends AbstractController
     function InitMain() : void
     {   
         //$this->createAuthFromModel(User::class);
+        /*
         $this->createFormModel(User::class,[
             "exclude" => [
                 "salt"
@@ -27,14 +28,24 @@ class RegisterController extends AbstractController
             ],
             "fields" => [
                 "password" => [
-                    'label' => "Register",
+                    'label' => "Register : ",
                     "class" => "form",
                     "type"  => "password"
                 ]
             ],
-            'labelSeperetor' => ':',
+            'labelSeperetor' => ' : ',
             "div" => 'class',
         ]);
+        */
+        $this->createFormModel(Cats::class,[
+            "submit" => [
+                'type' => 'submit',
+                'label' => "Add Cat",
+                'class' => 'btn'
+            ],
+            'labelSeperetor' => ':',
+            "div" => 'class',
+        ],1);
         $this->getForm();
     
 
