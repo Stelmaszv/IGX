@@ -4,7 +4,7 @@ namespace App\Core\Form;
 
 use App\Core\Form\Types\Input;
 use App\Core\Form\Types\Button;
-use App\Core\Form\Types\Texarea;
+use App\Core\Form\Types\Textarea;
 use App\Core\Model\AbstractModel;
 
 class GetFromFromModel
@@ -52,11 +52,10 @@ class GetFromFromModel
                     $fields['value'] = $this->model->get($this->id)->$method();
                 }
 
-
                 if($field !== 'texarea'){
                     $templeteForm->addField(new Input($fields));
                 }else{
-                    $templeteForm->addField(new Texarea($fields));
+                    $templeteForm->addField(new Textarea($fields));
                 }
             }
         }

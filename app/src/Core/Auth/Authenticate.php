@@ -1,7 +1,6 @@
 <?php
 namespace App\Core\Auth;
 
-use App\Core\MapCollection;
 use App\Main\Entity\UserEntity;
 use App\Infrastructure\DB\DBInterface;
 use App\Settings\AuthenticateSettings;
@@ -59,26 +58,58 @@ class Authenticate
         session_destroy();
     }
 
+    private function foundKey(array $data,$serach){
+        $index = 0;
+        
+        foreach($data as $key => $value){
+            if($key === $serach){
+                return $index;
+            }
+
+            $index++;
+        }
+
+        return false;
+    }
+
     public function login(array $data) : bool
     {
-        if(
-            !isset($data['email']) || !isset($data['password'])
-        ){
+        $loginKey = AuthenticateSettings::LOGINBY;
+
+        if (!isset($data[$loginKey]) || !isset($data['password'])) {
             return false;
         }
-            
-        $dataQuery = $this->engine->getQueryLoop('SELECT id,'.$this->engine->escapeString(array_keys($data)[0]).','.$this->engine->escapeString(array_keys($data)[1]).', salt FROM `User` WHERE '.$this->engine->escapeString(array_keys($data)[0]).' = "'.$this->engine->escapeString($data['email']).'"');
-
-       
-        if(count($dataQuery) > 0){
+        
+        $login = array_keys($data)[$this->foundKey($data, $loginKey)];
+        $password = array_keys($data)[$this->foundKey($data, 'password')];
+        
+        $escapedLogin = $this->engine->escapeString($login);
+        $escapedPassword = $this->engine->escapeString($password);
+        
+        $sql = sprintf(
+            'SELECT id, %s, %s, salt FROM `User` WHERE %s = "%s"',
+            $escapedLogin,
+            $escapedPassword,
+            $escapedLogin,
+            $this->engine->escapeString($data[$login])
+        );
+        
+        $dataQuery = $this->engine->getQueryLoop($sql);
+        
+        if (count($dataQuery) > 0) {
             $dataQuery = $dataQuery[0];
-            if (password_verify($data['password'].$dataQuery['salt'], $dataQuery['password'])) {
+            $saltedPassword = $data['password'] . $dataQuery['salt'];
+        
+            if (password_verify($saltedPassword, $dataQuery['password'])) {
                 $_SESSION['id'] = $dataQuery['id'];
                 return true;
+            }else{
+                throw new AuthenticateException("Invalid login data!");
             }
-        }else{
-            throw new AuthenticateException("Invalid login data !"); 
+        } else {
+            throw new AuthenticateException("Invalid login data!");
         }
+        
     }
 
 }
