@@ -10,17 +10,23 @@ use App\Core\Form\AbstractForm;
 use App\Core\Model\AbstractModel;
 use App\Core\Route\RouteNavigator;
 use App\Infrastructure\DB\Connect;
+use App\Core\Auth\AuthenticateForms;
+use App\Core\Auth\AuthenticateAction;
 use App\Infrastructure\DB\DBInterface;
 
 abstract class AbstractController
 {
+    use AuthenticateForms;
+    use AuthenticateAction;
     private ?Route $route;
     private ?VuexTemplate $vuexTemplate;
     private Authenticate $auth;
     private DBInterface $engine;
     protected RouteNavigator $routeNavigator;
     protected ?string $role = null;
-    private FormBulider $formBulider;
+    protected array $erros = [];
+    protected FormBulider $formBulider;
+
 
     public function __construct(array $gards = [])
     {
