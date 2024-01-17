@@ -5,7 +5,7 @@ namespace App\Core\Form;
 use Exception;
 use App\Core\Model\AbstractModel;
 
-class FormBulider
+class FormBuilder
 {
     private $form = null; 
     private array $formArray = []; 
@@ -34,7 +34,7 @@ class FormBulider
         return  $this->formArray;
     }
 
-    public function genrate(array $attribute) : string
+    public function generate(array $attribute) : string
     {
         $formTag = '<form ';
         foreach($attribute as $key => $attribut)

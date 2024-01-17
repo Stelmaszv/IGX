@@ -2,36 +2,17 @@
 
 namespace App\Main\Controller;
 
-use App\Core\Controller\AbstractController;
+use App\Core\GenericController\Auth\GenericAuthRegister;
 
-class RegisterController extends AbstractController
+class RegisterController extends GenericAuthRegister
 {   
-    function InitMain() : void
-    {   
-        $this->createRegisterForm();
-        $this->getForm();
-    
-        $this->setTemplate('../templete/Register.html',[
-            'form' => $this->genrateForm([
-                'method' => 'POST',
-                'class' => 'btn'
-            ]),
-            'erros' => $this->erros
-        ]);
+    protected string $template = '../templete/register.html';
+    protected array $formSettings = [
+        'method' => 'POST',
+        'class' => 'btn'
+    ];
 
-        echo $this->getTemplate();
+    public function actionAfterRegister(array $postData){
+        var_dump('Register');
     }
-
-    
-    public function onPost($POST) : void
-    {
-        
-        if($this->fromActionRegister($POST)){
-            var_dump('Register');
-        }
-
-        $this->InitMain();
-  
-    }
-
 }

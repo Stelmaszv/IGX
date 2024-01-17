@@ -4,7 +4,7 @@ namespace App\Core\Controller;
 
 use Exception;
 use App\Core\Route\Route;
-use App\Core\Form\FormBulider;
+use App\Core\Form\FormBuilder;
 use App\Core\Auth\Authenticate;
 use App\Core\Form\AbstractForm;
 use App\Core\Model\AbstractModel;
@@ -24,16 +24,15 @@ abstract class AbstractController
     private DBInterface $engine;
     protected RouteNavigator $routeNavigator;
     protected ?string $role = null;
-    protected array $erros = [];
-    protected FormBulider $formBulider;
-
+    protected array $errors = [];
+    protected FormBuilder $formBuilder;
 
     public function __construct(array $gards = [])
     {
         $connect = Connect::getInstance();
         $this->engine = $connect->getEngine();
         $this->auth = new Authenticate($this->engine);
-        $this->formBulider = new FormBulider();
+        $this->formBuilder = new FormBuilder();
 
         foreach($gards as $gard){
             $gardObj = new $gard;
@@ -47,20 +46,20 @@ abstract class AbstractController
             throw new Exception('This not instance of AbstractForm !');
         }
 
-        return $this->formBulider->setForm(new $form());
+        return $this->formBuilder->setForm(new $form());
     }
 
     public function getForm() : ?array
     {
-        if($this->formBulider->getAbstractForm() === null){
+        if($this->formBuilder->getAbstractForm() === null){
             return null;
         }
 
-        return $this->formBulider->getForm();  
+        return $this->formBuilder->getForm();  
     }
 
-    public function genrateForm(array $attribute){
-        return $this->formBulider->genrate($attribute);
+    public function generateForm(array $attribute){
+        return $this->formBuilder->generate($attribute);
     }
 
     public function getModel($model){
@@ -94,7 +93,7 @@ abstract class AbstractController
             throw new Exception('This not instance of AbstractModel !');
         }
 
-        $this->formBulider->createFormModel(new $model($this->engine),$modification,$id);
+        $this->formBuilder->createFormModel(new $model($this->engine),$modification,$id);
     }
 
     public function chceckAccess() : void{

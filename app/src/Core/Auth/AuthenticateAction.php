@@ -8,7 +8,7 @@ use App\Core\Model\ModelValidateException;
 
 trait AuthenticateAction
 {
-    public function fromActionRegister($POST)  : bool
+    public function fromAuthActionRegister($POST)  : bool
     {
         
         $POST['roles'] = new RolesMapCollection(); 
@@ -18,28 +18,28 @@ trait AuthenticateAction
             $auth = $this->getAuthenticate();
             $auth->register($POST);
         }catch (ModelValidateException $modelValidateException){
-            $this->erros[] =  [
+            $this->errors[] =  [
                 "error" => $modelValidateException->getMessage()
             ];
         }
 
-        return count($this->erros) === 0;
+        return count($this->errors) === 0;
   
     }
 
-    public function fromActionLogin($POST) : bool
+    public function fromAuthActionLogin($POST) : bool
     {
 
         try{
             $auth = $this->getAuthenticate();
             $auth->login($POST);
         }catch (AuthenticateException $Authenticate ){
-            $this->erros[] =  [
+            $this->errors[] =  [
                 "error" => $Authenticate->getMessage()
             ];
         }
 
-        return count($this->erros) === 0;
+        return count($this->errors) === 0;
     
     }
 }
