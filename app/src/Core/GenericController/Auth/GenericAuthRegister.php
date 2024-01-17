@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Core\GenericController;
+namespace App\Core\GenericController\Auth;
 
 use App\Core\Controller\AbstractController;
 

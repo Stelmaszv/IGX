@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Core\GenericController;
+namespace App\Core\GenericController\Auth;
 
 use App\Core\Controller\AbstractController;
 
@@ -17,7 +17,6 @@ abstract class GenericAuthLogin extends AbstractController
         $this->createLoginForm();
         $this->getForm();
     
-
         $this->setTemplate($this->template,[
             'form' => $this->generateForm($this->formSettings),
             'erros' => $this->errors

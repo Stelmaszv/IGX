@@ -2,7 +2,7 @@
 
 namespace App\Main\Controller;
 
-use App\Core\GenericController\GenericAuthRegister;
+use App\Core\GenericController\Auth\GenericAuthRegister;
 
 class RegisterController extends GenericAuthRegister
 {   

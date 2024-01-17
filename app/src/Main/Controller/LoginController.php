@@ -1,7 +1,8 @@
 <?php
 
 namespace App\Main\Controller;
-use App\Core\GenericController\GenericAuthLogin;
+
+use App\Core\GenericController\Auth\GenericAuthLogin;
 
 class LoginController extends GenericAuthLogin
 {
