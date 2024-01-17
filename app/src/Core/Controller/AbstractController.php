@@ -27,7 +27,6 @@ abstract class AbstractController
     protected array $errors = [];
     protected FormBuilder $formBuilder;
 
-
     public function __construct(array $gards = [])
     {
         $connect = Connect::getInstance();
