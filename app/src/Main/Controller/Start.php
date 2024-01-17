@@ -10,7 +10,7 @@ class Start extends AbstractController
     {   
         $this->setTemplate('../templete/home.html',
             [
-            'form' => $this->genrateForm([
+            'form' => $this->generateForm([
                 'method' => 'POST',
                 'class' => 'btn'
             ]),
