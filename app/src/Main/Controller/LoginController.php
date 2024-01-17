@@ -1,33 +1,17 @@
 <?php
 
 namespace App\Main\Controller;
-use App\Core\Controller\AbstractController;
+use App\Core\GenericController\GenericAuthLogin;
 
-class LoginController extends AbstractController
+class LoginController extends GenericAuthLogin
 {
-    public function InitMain() : void
-    {   
-        $this->createLoginForm();
-        $this->getForm();
-    
+    protected string $template = '../templete/login.html';
+    protected array $formSettings = [
+        'method' => 'POST',
+        'class' => 'btn'
+    ];
 
-        $this->setTemplate('../templete/Register.html',[
-            'form' => $this->genrateForm([
-                'method' => 'POST',
-                'class' => 'btn'
-            ]),
-            'erros' => $this->erros
-        ]);
-
-        echo $this->getTemplate();
-    }
-
-    public function onPost($POST) : void
-    {
-        if($this->fromActionLogin($POST)){
-            var_dump('Login');
-        }
-
-        $this->InitMain();
+    protected function actionAfterLogin(array $POST){
+        var_dump('login');
     }
 }
