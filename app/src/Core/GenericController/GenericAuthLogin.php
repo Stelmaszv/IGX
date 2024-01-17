@@ -12,28 +12,28 @@ abstract class GenericAuthLogin extends AbstractController
         'class' => 'btn'
     ];
 
-    public function InitMain() : void
+    public function initMain() : void
     {   
         $this->createLoginForm();
         $this->getForm();
     
 
         $this->setTemplate($this->template,[
-            'form' => $this->genrateForm($this->formSettings),
-            'erros' => $this->erros
+            'form' => $this->generateForm($this->formSettings),
+            'erros' => $this->errors
         ]);
 
         echo $this->getTemplate();
     }
 
-    public function onPost(array $POST) : void
+    public function onPost(array $postData) : void
     {
-        if($this->fromActionLogin($POST)){
-            $this->actionAfterLogin($POST);
+        if($this->fromAuthActionLogin($postData)){
+            $this->actionAfterLogin($postData);
         }
 
         $this->InitMain();
     }
 
-    protected function actionAfterLogin(array $POST){}
+    abstract public function actionAfterLogin(array $postData);
 }

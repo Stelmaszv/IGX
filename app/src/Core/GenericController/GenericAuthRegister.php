@@ -4,7 +4,7 @@ namespace App\Core\GenericController;
 
 use App\Core\Controller\AbstractController;
 
-abstract class GenercicAuthRegister extends AbstractController
+abstract class GenericAuthRegister extends AbstractController
 {
     protected string  $template = '';
     protected array $formSettings = [
@@ -12,28 +12,27 @@ abstract class GenercicAuthRegister extends AbstractController
         'class' => 'btn'
     ];
 
-    function InitMain() : void
+    function initMain() : void
     {   
         $this->createRegisterForm();
         $this->getForm();
     
         $this->setTemplate($this->template,[
-            'form' => $this->genrateForm($this->formSettings),
-            'erros' => $this->erros
+            'form' => $this->generateForm($this->formSettings),
+            'erros' => $this->errors
         ]);
 
         echo $this->getTemplate();
     }
 
-    
-    public function onPost($POST) : void
+    public function onPost($postData) : void
     {
-        if($this->fromActionRegister($POST)){
-            var_dump('Register');
+        if($this->fromAuthActionRegister($postData)){
+            $this->actionAfterRegister($postData);
         }
 
         $this->InitMain();
     }
 
-    protected function actionAfterLogin(array $POST){}
+    abstract public function actionAfterRegister(array $postData);
 }

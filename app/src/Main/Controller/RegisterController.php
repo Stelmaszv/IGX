@@ -2,9 +2,9 @@
 
 namespace App\Main\Controller;
 
-use App\Core\GenericController\GenercicAuthRegister;
+use App\Core\GenericController\GenericAuthRegister;
 
-class RegisterController extends GenercicAuthRegister
+class RegisterController extends GenericAuthRegister
 {   
     protected string $template = '../templete/register.html';
     protected array $formSettings = [
@@ -12,7 +12,7 @@ class RegisterController extends GenercicAuthRegister
         'class' => 'btn'
     ];
 
-    protected function actionAfterRegister(array $POST){
+    public function actionAfterRegister(array $postData){
         var_dump('Register');
     }
 }

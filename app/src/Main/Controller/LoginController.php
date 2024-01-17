@@ -11,7 +11,7 @@ class LoginController extends GenericAuthLogin
         'class' => 'btn'
     ];
 
-    protected function actionAfterLogin(array $POST){
+    public function actionAfterLogin(array $postData){
         var_dump('login');
     }
 }
