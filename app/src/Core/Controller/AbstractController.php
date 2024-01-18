@@ -97,17 +97,7 @@ abstract class AbstractController
     }
 
     public function chceckAccess() : void{
-        if($this->role !== null){
-
-            if(!$this->auth->inLogin()){
-                throw new UnauthorizedException('Unauthorized access !');
-            }
-
-            if($this->role !== 'login' && !$this->auth->getUser()->hasRole($this->role)){
-                throw new UnauthorizedException('Unauthorized access !');
-            }
-
-        }
+  
     }
 
     public function setRoutes(array $routes){
