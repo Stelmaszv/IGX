@@ -2,11 +2,7 @@
 
 namespace App\Main\Entity;
 
-use Exception;
-use App\Settings\RolesList;
-use App\Main\Collections\Role;
 use App\Core\Model\ModelEntity;
-use App\Main\Collections\RolesMapCollection;
 
 class UserEntity implements ModelEntity
 {
@@ -14,20 +10,20 @@ class UserEntity implements ModelEntity
     private ?string $name;
     private ?string $password;
     private ?string $email;
-    private ?string $roles;
+    private ?string $role;
     private ?string $salt;
 
     function __construct(
         string $name = null,
         string $password = null, 
         string $email = null, 
-        string $roles = null, 
+        string $role = null, 
         string $salt = null
     ){
         $this->name = $name;
         $this->password = $password;
         $this->email = $email;
-        $this->roles = $roles;
+        $this->role = $role;
         $this->salt = $salt;
     }
 
@@ -53,36 +49,15 @@ class UserEntity implements ModelEntity
         return $this->email;
     }
 
-    public function getRoles() : RolesMapCollection
+    public function getRole() : ?string
     {
-        $rolesMap =  new RolesMapCollection();
-        foreach(json_decode($this->roles) as $role){
-            $rolesMap->addRole(new Role($role));   
-        }
-
-        return $rolesMap;
+        return $this->role;
     }
 
-    public function getRolesAsJSON() : array
-    {
-        return json_decode($this->roles);
-    }
+    public function setRole(string $role){
+        $this->role = $role;
 
-    public function addRole(string $role){
-        $roles = json_decode($this->roles);
-
-        if(!in_array($role,RolesList::ROLES)){
-            throw new Exception('Invalid Role "'.$role.'" !');
-        }
-
-        $roles[] = $role;
-
-        $this->roles = json_encode($roles);
-    }
-
-    public function hasRole(string $role) : bool
-    {
-        return in_array($role,json_decode($this->roles));
+        return $this;
     }
 
     public function setName($name) : object
@@ -95,13 +70,6 @@ class UserEntity implements ModelEntity
     public function setEmail($email) : object
     {
         $this->email = $email;
-
-        return $this;
-    }
-
-    public function setRoles($roles) : object
-    {
-        $this->roles = $roles;
 
         return $this;
     }
