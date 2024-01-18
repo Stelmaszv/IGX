@@ -13,7 +13,7 @@ class SelectValues implements FormGenerator
         $this->attribute = $attribute;
     }
 
-    private function optionLoop() : string 
+    private function generateOptions() : string 
     {
         $options = '';
 
@@ -28,19 +28,19 @@ class SelectValues implements FormGenerator
     {
         if(isset($this->attribute['div']) || isset($this->attribute['divClass'])){
             $divClass = (isset($this->attribute['divClass'])) ? 'class='.$this->attribute['divClass'].'' : '';
-            return '<div '.$divClass.'>'.$this->getLabel().''.$this->getSelect().'</div>';
+            return '<div '.$divClass.'>'.$this->generateLabel().''.$this->generateSelect().'</div>';
         }
 
-        return $this->getLabel().''.$this->getSelect();
+        return $this->generateLabel().''.$this->generateSelect();
 
     }
 
-    private function getLabel(): string
+    private function generateLabel(): string
     {   
         return (isset($this->attribute['label']) &&  isset($this->attribute['id'])) ? '<label for="'.$this->attribute['id'].'">'.$this->attribute['label'].'</label>' : '';
     }
 
-    public function getSelect() : string
+    public function generateSelect() : string
     {
         $type = (isset($this->attribute['type'])) ? 'type='.$this->attribute['type'].'' : '';
         $id = (isset($this->attribute['id'])) ? 'id='.$this->attribute['id'].'' : '';
@@ -48,7 +48,7 @@ class SelectValues implements FormGenerator
         $name = (isset($this->attribute['name'])) ? 'name='.$this->attribute['name'].'' : '';
 
         $select = '<select '.$id.' '.$class.' '.$type.' '.$name.'>';
-        $select .= $this->optionLoop();
+        $select .= $this->generateOptions();
         $select .= '</select>';
 
         return $select;
