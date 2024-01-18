@@ -85,7 +85,7 @@ class SelectValue implements Field
  
     public function validate(mixed $value): void
     { 
-        if (!in_array($value, $this->selectValues)) {
+        if (in_array($value, $this->selectValues)) {
             throw new ModelValidateException('Invalid value for select !');
         }
 

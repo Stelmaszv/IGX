@@ -10,16 +10,6 @@ class Start extends AbstractController
 {
     function InitMain() : void
     {   
-        $users = $this->getModel(User::class);
-        $users->add(new UserEntity(
-            'cata',
-            '123',
-            'qefqeff@fqef.com',
-            'update',
-            123
-        ));
-        var_dump($users->getAll());
-
         $this->setTemplate('../templete/home.html',
             [
             'form' => $this->generateForm([

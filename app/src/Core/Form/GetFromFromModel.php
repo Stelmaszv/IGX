@@ -6,6 +6,8 @@ use App\Core\Form\Types\Input;
 use App\Core\Form\Types\Button;
 use App\Core\Form\Types\Textarea;
 use App\Core\Model\AbstractModel;
+use App\Core\Form\Types\SelectValues;
+use Exception;
 
 class GetFromFromModel
 {
@@ -51,12 +53,25 @@ class GetFromFromModel
                     $method = 'get'.$objModel->getName();
                     $fields['value'] = $this->model->get($this->id)->$method();
                 }
-
-                if($field !== 'texarea'){
-                    $templeteForm->addField(new Input($fields));
-                }else{
-                    $templeteForm->addField(new Textarea($fields));
+    
+                switch ($field) {
+                    case 'text':
+                        $templeteForm->addField(new Input($fields));
+                        break;
+                    case 'number':
+                        $templeteForm->addField(new Input($fields));
+                        break;
+                    case 'texarea':
+                        $templeteForm->addField(new Textarea($fields));
+                        break;
+                    case 'selectValue':
+                        $fields['options'] = $objModel->getSelectValues();
+                        $templeteForm->addField(new SelectValues($fields));
+                        break;
+                    default:
+                        throw new Exception('Invalid Field!');
                 }
+
             }
         }
 

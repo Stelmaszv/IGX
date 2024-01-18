@@ -5,10 +5,11 @@ namespace App\Core\Form;
 class FromFields
 {
     public const FIELDS = [
-        "FieldVarchar" => 'test',
+        "FieldVarchar" => 'text',
         "FieldEmail" => 'text',
         "FieldINT" => 'number',
         "FieldCollection" => 'texarea',
-        "FieldText" => 'texarea'
+        "FieldText" => 'texarea',
+        "SelectValue" => "selectValue"
     ];
 }
