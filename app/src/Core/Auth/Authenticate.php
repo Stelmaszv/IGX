@@ -16,7 +16,7 @@ class Authenticate
 
     public function register(array $data) : void
     {
-        if( !isset($data['email']) || !isset($data['name']) || !isset($data['password']) || !isset($data['roles'])){
+        if( !isset($data['email']) || !isset($data['name']) || !isset($data['password']) || !isset($data['role'])){
             throw new AuthenticateException("Invalid Data! name, password or roles are required !"); 
         }
         
@@ -29,7 +29,7 @@ class Authenticate
             $data['name'],
             password_hash($data['password'].$solt, PASSWORD_BCRYPT),
             $data['email'],
-            $data['roles']->map(),
+            $data['role'],
             $solt
         );
 
