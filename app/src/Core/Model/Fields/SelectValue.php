@@ -14,17 +14,17 @@ class SelectValue implements Field
     private ?string $value;
     private int $length;
     private bool $isNull;
-    private array $selectValues;
+    private array $options;
     protected DBInterface $engine; 
 
-    public function __construct(string $name, int $length, array $selectValues, bool $isNull = true)
+    public function __construct(string $name, int $length, array $options, bool $isNull = true)
     {
         if ($length > 256) {
             throw new ModelException("Varchar length cannot exceed 256 characters.");
         }
 
         $this->name = $name;
-        $this->selectValues = $selectValues;
+        $this->options = $options;
         $this->length = $length;
         $this->isNull = $isNull;
     }
@@ -33,14 +33,14 @@ class SelectValue implements Field
         $this->engine = $engine;
     }
 
-    public function getSelectValues(): array
+    public function getOptions(): array
     {
-        return $this->selectValues;
+        return $this->options;
     }
 
-    public function setSelectValues(array $objectValue): void
+    public function setOptions(array $options): void
     {
-        $this->selectValues = $objectValue;
+        $this->options = $options;
     }
 
     public function setActualName(string $name): void
@@ -85,7 +85,7 @@ class SelectValue implements Field
  
     public function validate(mixed $value): void
     { 
-        if (!in_array($value, $this->selectValues)) {
+        if (!in_array($value, $this->options)) {
             throw new ModelValidateException('Invalid value for select !');
         }
 

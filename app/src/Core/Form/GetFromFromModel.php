@@ -65,7 +65,7 @@ class GetFromFromModel
                         $templeteForm->addField(new Textarea($fields));
                         break;
                     case 'selectValue':
-                        $fields['options'] = $objModel->getSelectValues();
+                        $fields['options'] = $objModel->getOptions();
                         $templeteForm->addField(new SelectValues($fields));
                         break;
                     default:
