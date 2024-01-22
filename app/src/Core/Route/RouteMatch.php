@@ -2,6 +2,7 @@
 namespace App\Core\Route;
 
 use App\Core\Controller\AbstractController;
+use App\Core\Controller\UnauthorizedException;
 
 class RouteMatch
 {
@@ -47,8 +48,11 @@ class RouteMatch
             );
 
             $controller->setRoutes($this->routes);
-            $controller->chceckAccess();
-            $controller->main();
+            if($controller->chceckAccess()){
+                $controller->main();
+            }else{
+                throw new UnauthorizedException();
+            }
         }
 
         if ($home && $this->activeController === null) {
@@ -64,8 +68,11 @@ class RouteMatch
             );
 
             $controller->setRoutes($this->routes);
-            $controller->chceckAccess();
-            $controller->main();
+            if($controller->chceckAccess()){
+                $controller->main();
+            }else{
+                throw new UnauthorizedException();
+            }
         }
     }
 

@@ -6,6 +6,8 @@ use App\Core\Controller\AbstractController;
 
 class Start extends AbstractController
 {
+    protected ?string $role = 'CREATE';
+
     function InitMain() : void
     {   
         $this->setTemplate('../templete/home.html',

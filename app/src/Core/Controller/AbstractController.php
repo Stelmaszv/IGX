@@ -4,6 +4,7 @@ namespace App\Core\Controller;
 
 use Exception;
 use App\Core\Route\Route;
+use App\Security\RoleMatcher;
 use App\Core\Form\FormBuilder;
 use App\Core\Auth\Authenticate;
 use App\Core\Form\AbstractForm;
@@ -96,8 +97,31 @@ abstract class AbstractController
         $this->formBuilder->createFormModel(new $model($this->engine),$modification,$id);
     }
 
-    public function chceckAccess() : void{
-  
+    public function chceckAccess() : bool
+    {
+        if($this->role === null){
+            return true;
+        }
+
+        if($this->auth->getUser() === null){
+            return false;
+        }
+
+        $xml = simplexml_load_file("../src/Security/roles.xml");
+        $roleMatcher = new RoleMatcher($this->auth->getUser()?->getRole(), $this->role);
+    
+        foreach ($xml->role as $role) {
+            $roleName = (string)$role['name'];
+            if($roleName === $roleMatcher->getRole()){
+                $attributes = json_decode(json_encode($role->attribute), true);
+                $roleMatcher->setAttributes($attributes);
+                if($roleMatcher->hasAttribute()){
+                    return true;
+                }
+            }
+        }
+    
+        return false;
     }
 
     public function setRoutes(array $routes){
